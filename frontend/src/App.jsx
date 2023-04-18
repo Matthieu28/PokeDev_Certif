@@ -1,11 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 
-import NavBar from "@components/NavBar";
-import Home from "@pages/Home";
-import Login from "@pages/Login";
-import MakeList from "@pages/MakeList";
-import CreateMake from "@pages/CreateMake";
 import { useCurrentUserContext } from "./contexts/CurrentUserContext";
+import NavBar from "./components/NavBar";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import MakeList from "./pages/MakeList";
+import CreateMake from "./pages/CreateMake";
 
 import "./App.css";
 

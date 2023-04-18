@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { useCurrentUserContext } from "@contexts/CurrentUserContext";
 import { useNavigate } from "react-router-dom";
+import { useCurrentUserContext } from "../contexts/CurrentUserContext";
 
 import "./Login.css";
 
@@ -23,6 +23,7 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
+      // eslint-disable-next-line no-alert
       alert("You must provide an email and a password");
     } else {
       axios

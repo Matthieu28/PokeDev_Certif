@@ -14,6 +14,7 @@ export default function CreateMake() {
       e.target.files[0].type !== "image/jpeg"
     ) {
       setMakeLogo();
+      // eslint-disable-next-line no-alert
       alert("You must select a PNG or a JPEG file");
     } else {
       setMakeLogo(e.target.files[0]);
@@ -23,6 +24,7 @@ export default function CreateMake() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!makeName || !makeLogo) {
+      // eslint-disable-next-line no-alert
       alert("You must provide a name and a file");
     } else {
       const formData = new FormData();
@@ -33,6 +35,7 @@ export default function CreateMake() {
       axios
         .post(`${import.meta.env.VITE_BACKEND_URL}/api/makes`, formData)
         .then(({ data }) => {
+          // eslint-disable-next-line no-restricted-syntax
           console.log(data);
         })
         .catch((err) => {
