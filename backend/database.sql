@@ -52,13 +52,21 @@ CREATE TABLE IF NOT EXISTS pokeball (
 );
 
 CREATE TABLE IF NOT EXISTS bagBall (
+    id INT PRIMARY KEY AUTO_INCREMENT,
     userId INT NOT NULL,
     FOREIGN KEY (userId) REFERENCES user (id),
     pokeballId INT NOT NULL,
-    FOREIGN KEY (pokeballId) REFERENCES pokeball (id)
+    FOREIGN KEY (pokeballId) REFERENCES pokeball (id),
+    quantity INT NOT NULL DEFAULT 0
 );
 
 INSERT INTO role (name) VALUES ("basic"), ("vip"), ("admin");
+
+INSERT INTO pokeball (nameBall, url, rate) VALUES 
+("PokéBall", "https://www.pokepedia.fr/images/0/07/Miniature_Pok%C3%A9_Ball_HOME.png", 1), 
+("SuperBall", "https://www.pokepedia.fr/images/2/23/Miniature_Super_Ball_HOME.png", 1.5),
+("HyperBall", "https://www.pokepedia.fr/Fichier:Miniature_Hyper_Ball_HOME.png", 2),
+("MasterBall", "https://www.pokepedia.fr/Fichier:Miniature_Master_Ball_HOME.png", 255);
 
 INSERT INTO avatar (url, name) VALUES ("https://archives.bulbagarden.net/media/upload/9/9a/Spr_B2W2_Red.png", "Red"), ("https://archives.bulbagarden.net/media/upload/f/f4/Spr_B2W2_Blue.png", "Blue");
 
