@@ -46,30 +46,43 @@ export default function Login() {
   };
 
   return (
-    <form className="login" onSubmit={handleSubmit}>
-      <label htmlFor="email">
-        Email:{" "}
-        <input
-          type="email"
-          id="email"
-          required
-          placeholder="example@mail.com"
-          value={email}
-          onChange={handleChangeEmail}
-        />
-      </label>
-      <label htmlFor="password">
-        Password:{" "}
-        <input
-          type="password"
-          id="password"
-          required
-          placeholder="Your password"
-          value={password}
-          onChange={handleChangePassword}
-        />
-      </label>
-      <button type="submit">Login</button>
-    </form>
+    <div className="container_all_login">
+      <div className="container_image_title">
+        <h1>PokéDev</h1>
+      </div>
+      <div className="container_login">
+        <div className="login_title">
+          <h1>Login</h1>
+        </div>
+        <form className="login" onSubmit={handleSubmit}>
+          <label htmlFor="email">
+            <input
+              type="email"
+              id="email"
+              required
+              placeholder="example@mail.com"
+              value={email}
+              onChange={handleChangeEmail}
+            />
+          </label>
+          <label htmlFor="password">
+            <input
+              type="password"
+              id="password"
+              required
+              placeholder="Your password"
+              value={password}
+              onChange={handleChangePassword}
+            />
+          </label>
+          <button type="submit">Login</button>
+        </form>
+        <div className="div_create_account">
+          <p>
+            You dont have account ? Click <span>Here</span>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
