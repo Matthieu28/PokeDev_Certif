@@ -1,111 +1,168 @@
--- MySQL dump 10.13  Distrib 8.0.31, for macos12 (arm64)
---
--- Host: localhost    Database: garage
--- ------------------------------------------------------
--- Server version	8.0.31
+CREATE TABLE IF NOT EXISTS role (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL
+);
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE TABLE IF NOT EXISTS tier (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nameTier VARCHAR(25),
+  rate INT,
+  color VARCHAR(25)
+);
 
---
--- Table structure for table `make`
---
+CREATE TABLE IF NOT EXISTS pokemon (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    pokedexid INT NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    name VARCHAR(25) NOT NULL,
+    tierID INT DEFAULT 1,
+    FOREIGN KEY (tierId) REFERENCES tier(id)
+);
 
-DROP TABLE IF EXISTS `make`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `make` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `logo` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE IF NOT EXISTS avatar (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    url VARCHAR(255) NOT NULL,
+    name VARCHAR(25) NOT NULL
+);
 
---
--- Dumping data for table `make`
---
+CREATE TABLE IF NOT EXISTS user (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(50) NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    username VARCHAR(20) NOT NULL,
+    roleID INT DEFAULT 1,
+    avatarID INT DEFAULT 1,
+    FOREIGN KEY (roleId) REFERENCES role(id),
+    FOREIGN KEY (avatarId) REFERENCES avatar(id)
+);
 
-LOCK TABLES `make` WRITE;
-/*!40000 ALTER TABLE `make` DISABLE KEYS */;
-INSERT INTO `make` VALUES (1,'Honda','https://www.cars-data.com/design/images/cars-logo/honda-logo-small.jpg'),(2,'Ford','https://www.cars-data.com/design/images/cars-logo/ford-logo-small.jpg'),(3,'Toyota','https://www.cars-data.com/design/images/cars-logo/toyota-logo-small.jpg');
-/*!40000 ALTER TABLE `make` ENABLE KEYS */;
-UNLOCK TABLES;
+CREATE TABLE IF NOT EXISTS bagpokemon (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    userId INT NOT NULL,
+    FOREIGN KEY (userId) REFERENCES user (id),
+    pokemonId INT NOT NULL,
+    FOREIGN KEY (pokemonId) REFERENCES pokemon (id)
+);
 
---
--- Table structure for table `user`
---
+CREATE TABLE IF NOT EXISTS pokeball (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nameBall VARCHAR(25) NOT NULL,
+  url VARCHAR(255) NOT NULL,
+  rate INT NOT NULL
+);
 
-DROP TABLE IF EXISTS `user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `firstname` varchar(100) DEFAULT NULL,
-  `lastname` varchar(100) DEFAULT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE IF NOT EXISTS bagBall (
+    userId INT NOT NULL,
+    FOREIGN KEY (userId) REFERENCES user (id),
+    pokeballId INT NOT NULL,
+    FOREIGN KEY (pokeballId) REFERENCES pokeball (id)
+);
 
---
--- Dumping data for table `user`
---
+INSERT INTO role (name) VALUES ("basic"), ("vip"), ("admin");
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO avatar (url, name) VALUES ("https://archives.bulbagarden.net/media/upload/9/9a/Spr_B2W2_Red.png", "Red"), ("https://archives.bulbagarden.net/media/upload/f/f4/Spr_B2W2_Blue.png", "Blue");
 
---
--- Table structure for table `vehicle`
---
+INSERT INTO tier (nameTier, rate, color) VALUES ("Commun", 1, "#56D3FF"), ("Rare", 2, "#FF6C00"), ("Super Rare", 3, "#FFF000"), ("Legendary", 4, "#FF00FF"), ("Shiny", 5, "#9B00FF");
 
-DROP TABLE IF EXISTS `vehicle`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `vehicle` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `model` varchar(100) NOT NULL,
-  `manufactureYear` int unsigned NOT NULL,
-  `engineSize` int unsigned NOT NULL,
-  `fuelType` enum('GASOLINE','DIESEL','HYBRID','ELECTRICITY','HYDROGEN','COMPRESSED_NATURAL_GAS') DEFAULT NULL,
-  `weight` int unsigned DEFAULT NULL,
-  `makeId` int NOT NULL,
-  `image` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `makeId` (`makeId`),
-  CONSTRAINT `vehicle_ibfk_1` FOREIGN KEY (`makeId`) REFERENCES `make` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO pokemon (pokedexId, url, name, tierID) VALUES
+(1, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__001__xy.gif", "Bulbasaur", 1),
+(2, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__002__xy.gif", "Ivysaur", 2),
+(3, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__003_m_xy.gif", "Venusaur", 3),
+(4, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__004__xy.gif", "Charmander", 1),
+(5, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__005__xy.gif", "Charmeleon", 2),
+(6, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__006__xy.gif", "Charizard", 3),
+(7, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__007__xy.gif", "Squirtle", 1),
+(8, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__008__xy.gif", "Wartortle", 2),
+(9, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__009__xy.gif", "Blastoise", 3),
+(132, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__132__xy.gif", "Ditto", 3),
+(133, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__133__xy.gif", "Eevee", 2),
+(134, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__134__xy.gif", "Vaporeon", 3),
+(135, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__135__xy.gif", "Jolteon", 3),
+(136, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__136__xy.gif", "Flareon", 3),
+(144, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__144__xy.gif", "Articuno", 4),
+(145, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__145__xy.gif", "Zapdos", 4),
+(146, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__146__xy.gif", "Moltres", 4),
+(132, "https://www.pokencyclopedia.info/sprites/3ds/ani_6_shiny/3ani_-S_132__xy.gif", "Ditto", 5),
+(208, "https://www.pokencyclopedia.info/sprites/3ds/ani_6_shiny/3ani_-S_208-mega__oras.gif", "Mega Steelix", 5),
+(382, "https://www.pokencyclopedia.info/sprites/3ds/ani_6_shiny/3ani_-S_382-primal__oras.gif", "Primal Kyogre", 5),
+(383, "https://www.pokencyclopedia.info/sprites/3ds/ani_6_shiny/3ani_-S_383-primal__oras.gif", "Primal Groudon", 5),
+(384, "https://www.pokencyclopedia.info/sprites/3ds/ani_6_shiny/3ani_-S_384-mega__oras.gif", "Mega Rayquaza", 5),
+(94, "https://www.pokencyclopedia.info/sprites/3ds/ani_6_shiny/3ani_-S_094-mega__xy.gif", "Mega Gengar", 5),
+(718, "https://play.pokemonshowdown.com/sprites/xyani-shiny/zygarde-complete.gif", "Zygarde 100%", 5),
+(10, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__010__xy.gif", "Caterpie", 1),
+(11, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__011__xy.gif", "Metapod", 2),
+(12, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__012_f_xy.gif", "Butterfree", 3),
+(13, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__013__xy.gif", "Weedle", 1),
+(14, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__014__xy.gif", "Kakuna", 2),
+(15, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__015__xy.gif", "Beedrill", 3),
+(3, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__003-mega__xy.gif", "Mega Venusaur", 4),
+(6, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__006-mega-x__xy.gif", "Mega Charizard X", 4),
+(6, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__006-mega-y__xy.gif", "Mega Charizard Y", 4),
+(9, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__009-mega__xy.gif", "Mega Blastoise", 4),
+(15, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__015-mega__oras.gif", "Mega Beedrill", 4),
+(16, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__016__xy.gif", "Pidgey", 1),
+(17, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__017__xy.gif", "Pidgeotto", 2),
+(18, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__018__xy.gif", "Pidgeot", 3),
+(18, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__018-mega__oras.gif", "Mega Pidgeot", 4),
+(19, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__019_f_xy.gif", "Rattata", 1),
+(20, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__020_f_xy.gif", "Raticate", 2),
+(21, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__021__xy.gif", "Spearow", 1),
+(22, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__022__xy.gif", "Fearow", 2),
+(23, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__023__xy.gif", "Ekans", 1),
+(24, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__024__xy.gif", "Arbok", 2),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025_m_xy.gif", "Pikachu", 1),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-rock-star__oras.gif", "Pikachu Rock Star", 2),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-belle__oras.gif", "Pikachu Belle", 2),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-pop-star__oras.gif", "Pikachu Pop Star", 2),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-phd__oras.gif", "Pikachu Ph. D.", 2),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-libre__oras.gif", "Pikachu Libre", 2),
+(26, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__026_f_xy.gif", "Raichu", 2),
+(27, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__027__xy.gif", "Sandshrew", 1),
+(28, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__028__xy.gif", "Sandslash", 2),
+(29, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__029__xy.gif", "Nidoran ♀", 1),
+(30, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__030__xy.gif", "Nidorina", 2),
+(31, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__031__xy.gif", "Nidoqueen", 3),
+(32, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__032__xy.gif", "Nidoran ♂", 1),
+(33, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__033__xy.gif", "Nidorino", 2),
+(34, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__034__xy.gif", "Nidoking", 3),
+(92, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__092__xy.gif", "Gastly", 1),
+(93, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__093__xy.gif", "Haunter", 2),
+(94, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__094__xy.gif", "Gengar", 3),
+(94, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__094-mega__xy.gif", "Mega Gengar", 4),
+(129, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__129_f_xy.gif", "Magikarp", 1),
+(130, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__130_f_xy.gif", "Gyarados", 3),
+(130, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__130-mega__xy.gif", "Mega Gyarados", 4),
+(131, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__131__xy.gif", "Lapras", 3),
+(142, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__142__xy.gif", "Aerodactyl", 3),
+(142, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__142-mega__xy.gif", "Mega Aerodactyl", 4),
+(147, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__147__xy.gif", "Dratini", 1),
+(148, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__148__xy.gif", "Dragonair", 2),
+(149, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__149__xy.gif", "Dragonite", 3),
+(150, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__150__xy.gif", "Mewtwo", 4),
+(150, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__150-mega-x__xy.gif", "Mega Mewtwo X", 4),
+(150, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__150-mega-y__xy.gif", "Mega Mewtwo Y", 4),
+(151, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__151__xy.gif", "Mew", 4),
+(152, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__152__xy.gif", "Chikorita", 1),
+(153, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__153__xy.gif", "Bayleef", 2),
+(154, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__154_f_xy.gif", "Meganium", 3),
+(155, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__155__xy.gif", "Cyndaquil", 1),
+(156, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__156__xy.gif", "Quilava", 2),
+(157, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__157__xy.gif", "Typhlosion", 3),
+(158, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__158__xy.gif", "Totodile", 1),
+(159, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__159__xy.gif", "Croconaw", 2),
+(160, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__160__xy.gif", "Feraligatr", 3),
+(169, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__169__xy.gif", "Crobat", 3),
+(196, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__196__xy.gif", "Espeon", 3),
+(197, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__197__xy.gif", "Umbreon", 3),
+(243, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__243__xy.gif", "Raikou", 4),
+(244, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__244__xy.gif", "Entei", 4),
+(245, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__245__xy.gif", "Suicune", 4),
+(246, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__246__xy.gif", "Larvitar", 1),
+(247, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__247__xy.gif", "Pupitar", 2),
+(248, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__248__xy.gif", "Tyranitar", 3),
+(248, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__248-mega__xy.gif", "Mega Tyranitar", 4),
+(249, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__249__xy.gif", "Lugia", 4),
+(250, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__250__xy.gif", "Ho-Oh", 4),
+(251, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__251__xy.gif", "Celebi", 4);
 
---
--- Dumping data for table `vehicle`
---
 
-LOCK TABLES `vehicle` WRITE;
-/*!40000 ALTER TABLE `vehicle` DISABLE KEYS */;
-INSERT INTO `vehicle` VALUES (1,'Mustang Fastback',2015,2300,'GASOLINE',1715,2,'https://www.americancarcity.fr/wp-content/uploads/2020/09/Ford-Mustang-GT-2015-152.jpg'),(2,'Mustang Fastback GT',2018,5000,'GASOLINE',1882,2,'https://www.largus.fr/images/images/2018-ford-mustang-1.jpg'),(3,'E',2020,100,'ELECTRICITY',1524,1,'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Honda_e.jpg/1200px-Honda_e.jpg'),(4,'CR-Z',2010,1500,'HYBRID',1119,1,'https://www.largus.fr/images/images/Honda_CRZ_04.jpg'),(5,'CR-Z',2013,1500,'HYBRID',1131,1,'https://www.autoscout24.fr/assets/auto/images/model/honda/honda-cr-z/honda-cr-z-l-01.jpg'),(6,'S-2000',2004,2000,'GASOLINE',1220,1,'https://i.ytimg.com/vi/gphmJ70av2M/sddefault.jpg'),(7,'NSX',1997,3200,'GASOLINE',1370,1,'https://www.motorlegend.com/modules/breve/photos/high/honda-nsx-20960-1-P.jpg'),(8,'CIVIC IX',2015,1800,'GASOLINE',1197,1,'https://www.automobile-magazine.fr/asset/cms/840x394/10597/config/10064/cette-generation-de-civic-nest-toujours-disponible-quen-berline-cinq-portes-ou-break-mais-elle-continue-a-masquer-ses-poignees-de-portes-arriere-dans-les-montants.jpg'),(9,'CIVIC X Type-R',2017,2000,'GASOLINE',1380,1,'https://cache.motorsdb.com/resize/1600x1067/archives/2020/09/25/Honda-Civic-X-Type-R-Limited-Edition-2020-82181.jpg'),(10,'Yaris',2020,1500,'HYBRID',1015,3,'https://content.presspage.com/uploads/1523/1920_yaris-6.jpg');
-/*!40000 ALTER TABLE `vehicle` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2022-12-08 11:52:01

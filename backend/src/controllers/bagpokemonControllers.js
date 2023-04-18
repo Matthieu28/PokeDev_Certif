@@ -1,7 +1,7 @@
 const models = require("../models");
 
 const browse = (req, res) => {
-  models.vehicle
+  models.bagpokemon
     .findAll()
     .then(([rows]) => {
       res.send(rows);
@@ -13,7 +13,7 @@ const browse = (req, res) => {
 };
 
 const read = (req, res) => {
-  models.vehicle
+  models.bagpokemon
     .find(req.params.id)
     .then(([rows]) => {
       if (rows[0] == null) {
@@ -29,14 +29,14 @@ const read = (req, res) => {
 };
 
 const edit = (req, res) => {
-  const vehicle = req.body;
+  const bagpokemon = req.body;
 
   // TODO validations (length, format...)
 
-  vehicle.id = parseInt(req.params.id, 10);
+  bagpokemon.id = parseInt(req.params.id, 10);
 
-  models.vehicle
-    .update(vehicle)
+  models.bagpokemon
+    .update(bagpokemon)
     .then(([result]) => {
       if (result.affectedRows === 0) {
         res.sendStatus(404);
@@ -51,14 +51,14 @@ const edit = (req, res) => {
 };
 
 const add = (req, res) => {
-  const vehicle = req.body;
+  const bagpokemon = req.body;
 
   // TODO validations (length, format...)
 
-  models.vehicle
-    .insert(vehicle)
+  models.bagpokemon
+    .insert(bagpokemon)
     .then(([result]) => {
-      res.location(`/vehicles/${result.insertId}`).sendStatus(201);
+      res.location(`/bagpokemons/${result.insertId}`).sendStatus(201);
     })
     .catch((err) => {
       console.error(err);
@@ -67,7 +67,7 @@ const add = (req, res) => {
 };
 
 const destroy = (req, res) => {
-  models.vehicle
+  models.bagpokemon
     .delete(req.params.id)
     .then(([result]) => {
       if (result.affectedRows === 0) {
