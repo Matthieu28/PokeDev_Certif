@@ -44,14 +44,34 @@ export default function NavBar() {
               Login
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              className={({ isActive }) => (isActive ? "active" : undefined)}
+              to="/pokedex"
+              style={{ textDecoration: "none", color: "#eeeeee" }}
+            >
+              Pokédex
+            </NavLink>
+          </li>
           {currentUser.id && (
             <li>
               <NavLink
                 className={({ isActive }) => (isActive ? "active" : undefined)}
-                to="/makes"
+                to="/shop"
                 style={{ textDecoration: "none", color: "#eeeeee" }}
               >
-                Makes
+                Shop
+              </NavLink>
+            </li>
+          )}
+          {currentUser.id && (
+            <li>
+              <NavLink
+                className={({ isActive }) => (isActive ? "active" : undefined)}
+                to="/catch"
+                style={{ textDecoration: "none", color: "#eeeeee" }}
+              >
+                Catch
               </NavLink>
             </li>
           )}
@@ -77,6 +97,15 @@ export default function NavBar() {
               Login
             </NavLink>
           </li>
+          <li>
+            <NavLink
+              className={({ isActive }) => (isActive ? "active" : undefined)}
+              to="/pokedex"
+              style={{ textDecoration: "none", color: "#eeeeee" }}
+            >
+              Pokédex
+            </NavLink>
+          </li>
           {currentUser.id && (
             <li>
               <NavLink
@@ -84,7 +113,18 @@ export default function NavBar() {
                 to="/makes"
                 style={{ textDecoration: "none", color: "#eeeeee" }}
               >
-                Makes
+                Shop
+              </NavLink>
+            </li>
+          )}
+          {currentUser.id && (
+            <li>
+              <NavLink
+                className={({ isActive }) => (isActive ? "active" : undefined)}
+                to="/catch"
+                style={{ textDecoration: "none", color: "#eeeeee" }}
+              >
+                Catch
               </NavLink>
             </li>
           )}

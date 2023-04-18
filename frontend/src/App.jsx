@@ -4,7 +4,9 @@ import { useCurrentUserContext } from "./contexts/CurrentUserContext";
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import MakeList from "./pages/MakeList";
+import Shop from "./pages/Shop";
+import Pokedex from "./pages/Pokedex";
+import Catch from "./pages/Catch";
 
 import "./App.css";
 
@@ -17,7 +19,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          {currentUser.id && <Route path="/makes" element={<MakeList />} />}
+          <Route path="/pokedex" element={<Pokedex />} />
+          {currentUser.id && <Route path="/shop" element={<Shop />} />}
+          {currentUser.id && <Route path="/catch" element={<Catch />} />}
           <Route path="*" element={<p>404 Not Found</p>} />
         </Routes>
       </main>
