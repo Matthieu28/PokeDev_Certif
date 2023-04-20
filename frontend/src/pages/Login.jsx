@@ -37,7 +37,7 @@ export default function Login() {
         )
         .then(({ data }) => {
           setCurrentUser(data);
-          navigate("/makes");
+          navigate("/home");
         })
         .catch((err) => {
           console.error(err);

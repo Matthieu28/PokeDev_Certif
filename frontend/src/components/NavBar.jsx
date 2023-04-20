@@ -26,24 +26,28 @@ export default function NavBar() {
           <span />
         </button>
         <ul className={`navbar_mobile ${showNavbar ? "open" : ""}`}>
-          <li>
-            <NavLink
-              className={({ isActive }) => (isActive ? "active" : undefined)}
-              to="/"
-              style={{ textDecoration: "none", color: "#eeeeee" }}
-            >
-              Home
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              className={({ isActive }) => (isActive ? "active" : undefined)}
-              to="/login"
-              style={{ textDecoration: "none", color: "#eeeeee" }}
-            >
-              Login
-            </NavLink>
-          </li>
+          {!currentUser.id && (
+            <li>
+              <NavLink
+                className={({ isActive }) => (isActive ? "active" : undefined)}
+                to="/"
+                style={{ textDecoration: "none", color: "#eeeeee" }}
+              >
+                Login
+              </NavLink>
+            </li>
+          )}
+          {currentUser.id && (
+            <li>
+              <NavLink
+                className={({ isActive }) => (isActive ? "active" : undefined)}
+                to="/home"
+                style={{ textDecoration: "none", color: "#eeeeee" }}
+              >
+                Home
+              </NavLink>
+            </li>
+          )}
           <li>
             <NavLink
               className={({ isActive }) => (isActive ? "active" : undefined)}
@@ -90,24 +94,28 @@ export default function NavBar() {
       </div>
       <div className="div_navbar_pc">
         <ul className="navbar_pc">
-          <li>
-            <NavLink
-              className={({ isActive }) => (isActive ? "active" : undefined)}
-              to="/"
-              style={{ textDecoration: "none", color: "#eeeeee" }}
-            >
-              Home
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              className={({ isActive }) => (isActive ? "active" : undefined)}
-              to="/login"
-              style={{ textDecoration: "none", color: "#eeeeee" }}
-            >
-              Login
-            </NavLink>
-          </li>
+          {!currentUser.id && (
+            <li>
+              <NavLink
+                className={({ isActive }) => (isActive ? "active" : undefined)}
+                to="/"
+                style={{ textDecoration: "none", color: "#eeeeee" }}
+              >
+                Login
+              </NavLink>
+            </li>
+          )}
+          {currentUser.id && (
+            <li>
+              <NavLink
+                className={({ isActive }) => (isActive ? "active" : undefined)}
+                to="/home"
+                style={{ textDecoration: "none", color: "#eeeeee" }}
+              >
+                Home
+              </NavLink>
+            </li>
+          )}
           <li>
             <NavLink
               className={({ isActive }) => (isActive ? "active" : undefined)}
