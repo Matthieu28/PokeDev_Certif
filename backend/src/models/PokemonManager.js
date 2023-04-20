@@ -18,7 +18,10 @@ class PokemonManager extends AbstractManager {
 
   findAll() {
     return this.connection.query(
-      `select pokemon.*, tier.* from ${this.table} as pokemon left join tier on pokemon.tierId = tier.id order by pokemon.pokedexid`
+      `SELECT pokemon.id AS pokemonId, pokemon.pokedexid, pokemon.url, pokemon.name, tier.*
+      FROM pokemon
+      INNER JOIN tier ON pokemon.tierId = tier.id
+      ORDER BY pokemon.pokedexid`
     );
   }
 }

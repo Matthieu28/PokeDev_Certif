@@ -75,6 +75,17 @@ export default function NavBar() {
               </NavLink>
             </li>
           )}
+          {currentUser.id && (
+            <li>
+              <NavLink
+                className={({ isActive }) => (isActive ? "active" : undefined)}
+                to="/bag"
+                style={{ textDecoration: "none", color: "#eeeeee" }}
+              >
+                Bag
+              </NavLink>
+            </li>
+          )}
         </ul>
       </div>
       <div className="div_navbar_pc">
@@ -125,6 +136,17 @@ export default function NavBar() {
                 style={{ textDecoration: "none", color: "#eeeeee" }}
               >
                 Catch
+              </NavLink>
+            </li>
+          )}
+          {currentUser.id && (
+            <li>
+              <NavLink
+                className={({ isActive }) => (isActive ? "active" : undefined)}
+                to="/bag"
+                style={{ textDecoration: "none", color: "#eeeeee" }}
+              >
+                Bag
               </NavLink>
             </li>
           )}
