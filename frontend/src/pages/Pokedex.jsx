@@ -43,7 +43,7 @@ export default function Pokedex() {
   return (
     <div className="container_pokedex">
       <div className="div_title_pokedex">
-        <h1>All pokemon in pokedex</h1>
+        <h1>All pokemon avaible</h1>
       </div>
       <div className="div_filtre_pokedex">
         <h1>By name</h1>

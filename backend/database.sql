@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS bagBall (
     CHECK (quantity >= 0)
 );
 
-CREATE TRIGGER update_bagball_quantity
+CREATE TRIGGER update_bagball_quantity_pokeball
 AFTER INSERT ON user
 FOR EACH ROW
 BEGIN
@@ -76,6 +76,60 @@ BEGIN
     UPDATE bagBall
     SET quantity = 20
     WHERE userId = NEW.id AND pokeballId = 1;
+  END IF;
+END;
+
+CREATE TRIGGER update_bagball_quantity_superball
+AFTER INSERT ON user
+FOR EACH ROW
+BEGIN
+  DECLARE pokeball_count INT;
+  SELECT COUNT(*) INTO pokeball_count
+  FROM bagBall
+  WHERE userId = NEW.id AND pokeballId = 2;
+  IF pokeball_count = 0 THEN
+    INSERT INTO bagBall (userId, pokeballId, quantity)
+    VALUES (NEW.id, 2, 5);
+  ELSE
+    UPDATE bagBall
+    SET quantity = 5
+    WHERE userId = NEW.id AND pokeballId = 2;
+  END IF;
+END;
+
+CREATE TRIGGER update_bagball_quantity_hyperball
+AFTER INSERT ON user
+FOR EACH ROW
+BEGIN
+  DECLARE pokeball_count INT;
+  SELECT COUNT(*) INTO pokeball_count
+  FROM bagBall
+  WHERE userId = NEW.id AND pokeballId = 3;
+  IF pokeball_count = 0 THEN
+    INSERT INTO bagBall (userId, pokeballId, quantity)
+    VALUES (NEW.id, 3, 0);
+  ELSE
+    UPDATE bagBall
+    SET quantity = 0
+    WHERE userId = NEW.id AND pokeballId = 3;
+  END IF;
+END;
+
+CREATE TRIGGER update_bagball_quantity_masterball
+AFTER INSERT ON user
+FOR EACH ROW
+BEGIN
+  DECLARE pokeball_count INT;
+  SELECT COUNT(*) INTO pokeball_count
+  FROM bagBall
+  WHERE userId = NEW.id AND pokeballId = 4;
+  IF pokeball_count = 0 THEN
+    INSERT INTO bagBall (userId, pokeballId, quantity)
+    VALUES (NEW.id, 4, 0);
+  ELSE
+    UPDATE bagBall
+    SET quantity = 0
+    WHERE userId = NEW.id AND pokeballId = 4;
   END IF;
 END;
 

@@ -43,15 +43,15 @@ export default function Catch() {
     for (let i = 0; i < shuffledSpawnPokemon.length; i += 1) {
       const pokemon = shuffledSpawnPokemon[i];
       let tierChance = 0;
-      if (pokemon.tierID === 1) {
+      if (pokemon.id === 1) {
         tierChance = 0.59; // 59% chance
-      } else if (pokemon.tierID === 2) {
+      } else if (pokemon.id === 2) {
         tierChance = 0.33; // 33% chance
-      } else if (pokemon.tierID === 3) {
+      } else if (pokemon.id === 3) {
         tierChance = 0.074; // 7.4% chance
-      } else if (pokemon.tierID === 4) {
+      } else if (pokemon.id === 4) {
         tierChance = 0.005; // 0.5% chance
-      } else if (pokemon.tierID === 5) {
+      } else if (pokemon.id === 5) {
         tierChance = 0.001; // 0.1% chance
       }
       tierChanceSum += tierChance;
@@ -100,6 +100,17 @@ export default function Catch() {
     }
   };
 
+  const getCaughtPokemon = async (userId, pokemonId) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bagpokemons`, {
+        userId,
+        pokemonId,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleCatchClick = async (ballId) => {
     const selectedBall = pokeball.find((ball) => ball.bagballId === ballId);
     if (selectedBall.quantity > 0) {
@@ -107,8 +118,13 @@ export default function Catch() {
       await updatePokeballQuantity(ballId);
       if (rateCatch) {
         setIsCaptured("Caught");
+        if (randomPokemon) {
+          await getCaughtPokemon(currentUser.id, randomPokemon.pokemonId);
+        }
+        setRandomPokemon(null);
       } else {
         setIsCaptured("He escaped");
+        setRandomPokemon(null);
       }
     } else {
       // eslint-disable-next-line no-alert
@@ -120,6 +136,7 @@ export default function Catch() {
   console.log(pokeball);
   // eslint-disable-next-line no-restricted-syntax
   console.log(randomPokemon);
+  // eslint-disable-next-line no-restricted-syntax
 
   return (
     <div>
@@ -139,7 +156,11 @@ export default function Catch() {
       <p>{isCaptured}</p>
       {randomPokemon &&
         pokeball.map((ball) => (
-          <div className="div_pokeball_bag" key={ball.bagballId}>
+          <div
+            className="div_pokeball_bag"
+            key={ball.bagballId}
+            style={ball.quantity ? { display: "block" } : { display: "none" }}
+          >
             <img src={ball.pokeballUrl} alt={ball.nameBall} />
             <p>{ball.pokeballName}</p>
             <p>{ball.quantity}</p>
