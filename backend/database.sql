@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS pokeball (
   id INT PRIMARY KEY AUTO_INCREMENT,
   nameBall VARCHAR(25) NOT NULL,
   url VARCHAR(255) NOT NULL,
-  rate INT NOT NULL
+  rate FLOAT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS bagBall (
@@ -61,82 +61,48 @@ CREATE TABLE IF NOT EXISTS bagBall (
     CHECK (quantity >= 0)
 );
 
-CREATE TRIGGER update_bagball_quantity_pokeball
-AFTER INSERT ON user
-FOR EACH ROW
+CREATE TRIGGER tr_user_created
+AFTER INSERT
+ON user FOR EACH ROW
 BEGIN
-  DECLARE pokeball_count INT;
-  SELECT COUNT(*) INTO pokeball_count
-  FROM bagBall
-  WHERE userId = NEW.id AND pokeballId = 1;
-  IF pokeball_count = 0 THEN
-    INSERT INTO bagBall (userId, pokeballId, quantity)
-    VALUES (NEW.id, 1, 20);
-  ELSE
-    UPDATE bagBall
-    SET quantity = 20
-    WHERE userId = NEW.id AND pokeballId = 1;
-  END IF;
+  -- Insérer un nouvel enregistrement dans la table bagBall avec les quantités appropriées
+  INSERT INTO bagBall (userId, pokeballId, quantity)
+  VALUES (NEW.id, 1, 20),
+         (NEW.id, 2, 0),
+         (NEW.id, 3, 0),
+         (NEW.id, 4, 0);
 END;
 
-CREATE TRIGGER update_bagball_quantity_superball
-AFTER INSERT ON user
-FOR EACH ROW
+CREATE TRIGGER tr_pokeball_created
+AFTER INSERT
+ON pokeball FOR EACH ROW
 BEGIN
-  DECLARE pokeball_count INT;
-  SELECT COUNT(*) INTO pokeball_count
-  FROM bagBall
-  WHERE userId = NEW.id AND pokeballId = 2;
-  IF pokeball_count = 0 THEN
-    INSERT INTO bagBall (userId, pokeballId, quantity)
-    VALUES (NEW.id, 2, 5);
-  ELSE
-    UPDATE bagBall
-    SET quantity = 5
-    WHERE userId = NEW.id AND pokeballId = 2;
-  END IF;
-END;
+  -- Récupérer tous les "userId" distincts de la table "user"
+  DECLARE done INT DEFAULT 0;
+  DECLARE userId INT;
+  DECLARE cur CURSOR FOR SELECT DISTINCT id FROM user;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
-CREATE TRIGGER update_bagball_quantity_hyperball
-AFTER INSERT ON user
-FOR EACH ROW
-BEGIN
-  DECLARE pokeball_count INT;
-  SELECT COUNT(*) INTO pokeball_count
-  FROM bagBall
-  WHERE userId = NEW.id AND pokeballId = 3;
-  IF pokeball_count = 0 THEN
-    INSERT INTO bagBall (userId, pokeballId, quantity)
-    VALUES (NEW.id, 3, 0);
-  ELSE
-    UPDATE bagBall
-    SET quantity = 0
-    WHERE userId = NEW.id AND pokeballId = 3;
-  END IF;
-END;
+  -- Ouvrir le curseur pour récupérer les "userId"
+  OPEN cur;
 
-CREATE TRIGGER update_bagball_quantity_masterball
-AFTER INSERT ON user
-FOR EACH ROW
-BEGIN
-  DECLARE pokeball_count INT;
-  SELECT COUNT(*) INTO pokeball_count
-  FROM bagBall
-  WHERE userId = NEW.id AND pokeballId = 4;
-  IF pokeball_count = 0 THEN
-    INSERT INTO bagBall (userId, pokeballId, quantity)
-    VALUES (NEW.id, 4, 0);
-  ELSE
-    UPDATE bagBall
-    SET quantity = 0
-    WHERE userId = NEW.id AND pokeballId = 4;
-  END IF;
+  -- Parcourir les "userId" et insérer un enregistrement dans la table "bagBall" avec une quantité de 0 pour chaque "userId"
+  read_loop: LOOP
+    FETCH cur INTO userId;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+    INSERT INTO bagBall (userId, pokeballId, quantity) VALUES (userId, NEW.id, 0);
+  END LOOP;
+
+  -- Fermer le curseur
+  CLOSE cur;
 END;
 
 INSERT INTO role (name) VALUES ("basic"), ("vip"), ("admin");
 
 INSERT INTO pokeball (nameBall, url, rate) VALUES 
-("PokéBall", "https://www.pokepedia.fr/images/0/07/Miniature_Pok%C3%A9_Ball_HOME.png", 1), 
+("PokeBall", "https://www.pokepedia.fr/images/0/07/Miniature_Pok%C3%A9_Ball_HOME.png", 1), 
 ("SuperBall", "https://www.pokepedia.fr/images/2/23/Miniature_Super_Ball_HOME.png", 1.5),
 ("HyperBall", "https://www.pokepedia.fr/images/a/a2/Miniature_Hyper_Ball_HOME.png", 2),
 ("MasterBall", "https://www.pokepedia.fr/images/3/34/Miniature_Master_Ball_HOME.png", 255);

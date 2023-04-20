@@ -18,12 +18,12 @@ function App() {
       <NavBar />
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          {!currentUser.id && <Route path="/" element={<Login />} />}
           <Route path="/pokedex" element={<Pokedex />} />
-          {currentUser.id && <Route path="/shop" element={<Shop />} />}
+          {currentUser.id && <Route path="/home" element={<Home />} />}
           {currentUser.id && <Route path="/catch" element={<Catch />} />}
           {currentUser.id && <Route path="/bag" element={<Bag />} />}
+          {currentUser.id && <Route path="/shop" element={<Shop />} />}
           <Route path="*" element={<p>404 Not Found</p>} />
         </Routes>
       </main>

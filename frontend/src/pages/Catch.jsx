@@ -36,6 +36,7 @@ export default function Catch() {
   };
 
   const getRandomPokemon = () => {
+    setIsCaptured("");
     const randomNum = Math.random();
     let selectedPokemon = null;
     let tierChanceSum = 0;
