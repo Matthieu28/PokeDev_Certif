@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS user (
     id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(50) NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    username VARCHAR(20) NOT NULL,
+    username VARCHAR(20) NOT NULL UNIQUE,
     roleID INT DEFAULT 1,
     avatarID INT DEFAULT 1,
     FOREIGN KEY (roleId) REFERENCES role(id),
@@ -57,16 +57,35 @@ CREATE TABLE IF NOT EXISTS bagBall (
     FOREIGN KEY (userId) REFERENCES user (id),
     pokeballId INT NOT NULL,
     FOREIGN KEY (pokeballId) REFERENCES pokeball (id),
-    quantity INT NOT NULL DEFAULT 0
+    quantity INT NOT NULL DEFAULT 0,
+    CHECK (quantity >= 0)
 );
+
+CREATE TRIGGER update_bagball_quantity
+AFTER INSERT ON user
+FOR EACH ROW
+BEGIN
+  DECLARE pokeball_count INT;
+  SELECT COUNT(*) INTO pokeball_count
+  FROM bagBall
+  WHERE userId = NEW.id AND pokeballId = 1;
+  IF pokeball_count = 0 THEN
+    INSERT INTO bagBall (userId, pokeballId, quantity)
+    VALUES (NEW.id, 1, 20);
+  ELSE
+    UPDATE bagBall
+    SET quantity = 20
+    WHERE userId = NEW.id AND pokeballId = 1;
+  END IF;
+END;
 
 INSERT INTO role (name) VALUES ("basic"), ("vip"), ("admin");
 
 INSERT INTO pokeball (nameBall, url, rate) VALUES 
 ("PokéBall", "https://www.pokepedia.fr/images/0/07/Miniature_Pok%C3%A9_Ball_HOME.png", 1), 
 ("SuperBall", "https://www.pokepedia.fr/images/2/23/Miniature_Super_Ball_HOME.png", 1.5),
-("HyperBall", "https://www.pokepedia.fr/Fichier:Miniature_Hyper_Ball_HOME.png", 2),
-("MasterBall", "https://www.pokepedia.fr/Fichier:Miniature_Master_Ball_HOME.png", 255);
+("HyperBall", "https://www.pokepedia.fr/images/a/a2/Miniature_Hyper_Ball_HOME.png", 2),
+("MasterBall", "https://www.pokepedia.fr/images/3/34/Miniature_Master_Ball_HOME.png", 255);
 
 INSERT INTO avatar (url, name) VALUES ("https://archives.bulbagarden.net/media/upload/9/9a/Spr_B2W2_Red.png", "Red"), ("https://archives.bulbagarden.net/media/upload/f/f4/Spr_B2W2_Blue.png", "Blue");
 
@@ -172,5 +191,3 @@ INSERT INTO pokemon (pokedexId, url, name, tierID) VALUES
 (249, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__249__xy.gif", "Lugia", 4),
 (250, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__250__xy.gif", "Ho-Oh", 4),
 (251, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__251__xy.gif", "Celebi", 4);
-
-

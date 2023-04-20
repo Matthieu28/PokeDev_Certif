@@ -110,7 +110,7 @@ export default function NavBar() {
             <li>
               <NavLink
                 className={({ isActive }) => (isActive ? "active" : undefined)}
-                to="/makes"
+                to="/shop"
                 style={{ textDecoration: "none", color: "#eeeeee" }}
               >
                 Shop

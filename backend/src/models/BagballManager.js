@@ -16,11 +16,14 @@ class BagballManager extends AbstractManager {
     ]);
   }
 
-  findAll(userId) {
-    return this.connection.query(
-      `SELECT bb.id as bagballId, u.username as userName, p.nameBall as pokeballName, p.url as pokeballUrl, bb.quantity, bb.userId FROM ${this.table} as bb JOIN user as u ON u.id = bb.userId JOIN pokeball as p ON p.id = bb.pokeballId WHERE bb.userId = ?`,
-      [userId]
-    );
+  findAll(userId = null) {
+    if (userId) {
+      return this.connection.query(
+        `SELECT bb.id as bagballId, u.username as userName, p.nameBall as pokeballName, p.url as pokeballUrl, bb.quantity, bb.userId FROM ${this.table} as bb JOIN user as u ON u.id = bb.userId JOIN pokeball as p ON p.id = bb.pokeballId WHERE bb.userId = ?`,
+        [userId]
+      );
+    }
+    return this.connection.query(`SELECT * FROM ${this.table}`);
   }
 }
 

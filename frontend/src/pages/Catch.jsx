@@ -8,6 +8,7 @@ export default function Catch() {
   const [spawnPokemon, setSpawnPokemon] = useState([]);
   const [randomPokemon, setRandomPokemon] = useState(null);
   const [pokeball, setPokeball] = useState([]);
+  const [isCaptured, setIsCaptured] = useState("");
 
   const getSpawnPokemon = async () => {
     try {
@@ -23,21 +24,6 @@ export default function Catch() {
   useEffect(() => {
     getSpawnPokemon();
   }, []);
-
-  const getPokeball = async () => {
-    try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${currentUser.id}`
-      );
-      setPokeball(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    getPokeball();
-  }, [currentUser.id]);
 
   const shuffleArray = (array) => {
     const newArray = [...array];
@@ -78,36 +64,62 @@ export default function Catch() {
     setRandomPokemon(selectedPokemon);
   };
 
-  const catchPokemon = async (ballId) => {
-    if (pokeball.find((ball) => ball.bagballId === ballId).quantity === 0) {
-      // eslint-disable-next-line no-alert
-      alert("You have no pokeballs left.");
-      return;
-    }
-    if (randomPokemon) {
-      try {
-        await axios.put(
-          `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`,
-          { quantity: -1 }
-        );
-        setPokeball((prevPokeball) =>
-          prevPokeball.map((ball) => {
-            if (ball.bagballId === ballId) {
-              return { ...ball, quantity: ball.quantity - 1 };
-            }
-            return ball;
-          })
-        );
-      } catch (err) {
-        console.error(err);
-      }
-    } else {
-      // eslint-disable-next-line no-alert
-      alert("You must click to spawn a pokemon");
+  const getPokeball = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/all/${currentUser.id}`
+      );
+      setPokeball(data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  console.error(pokeball);
+  useEffect(() => {
+    getPokeball();
+  }, [currentUser.id]);
+
+  const updatePokeballQuantity = async (ballId) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`
+      );
+      const currentQuantity = response.data.quantity;
+      const newQuantity = currentQuantity - 1;
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`,
+        { quantity: newQuantity }
+      );
+      setPokeball((prevPokeball) =>
+        prevPokeball.map((ball) =>
+          ball.bagballId === ballId ? { ...ball, quantity: newQuantity } : ball
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCatchClick = async (ballId) => {
+    const selectedBall = pokeball.find((ball) => ball.bagballId === ballId);
+    if (selectedBall.quantity > 0) {
+      const rateCatch = Math.random() < 0.5; // 1/2, 50%
+      await updatePokeballQuantity(ballId);
+      if (rateCatch) {
+        setIsCaptured("Caught");
+      } else {
+        setIsCaptured("He escaped");
+      }
+    } else {
+      // eslint-disable-next-line no-alert
+      alert("No more ball !");
+    }
+  };
+
+  // eslint-disable-next-line no-restricted-syntax
+  console.log(pokeball);
+  // eslint-disable-next-line no-restricted-syntax
+  console.log(randomPokemon);
 
   return (
     <div>
@@ -124,16 +136,21 @@ export default function Catch() {
           />
         </div>
       )}
-      {pokeball.map((ball) => (
-        <div className="div_pokeball_bag" key={ball.bagballId}>
-          <img src={ball.pokeballUrl} alt={ball.nameBall} />
-          <p>{ball.pokeballName}</p>
-          <p>{ball.quantity}</p>
-          <button type="button" onClick={() => catchPokemon(ball.bagballId)}>
-            Catch
-          </button>
-        </div>
-      ))}
+      <p>{isCaptured}</p>
+      {randomPokemon &&
+        pokeball.map((ball) => (
+          <div className="div_pokeball_bag" key={ball.bagballId}>
+            <img src={ball.pokeballUrl} alt={ball.nameBall} />
+            <p>{ball.pokeballName}</p>
+            <p>{ball.quantity}</p>
+            <button
+              type="button"
+              onClick={() => handleCatchClick(ball.bagballId)}
+            >
+              Catch
+            </button>
+          </div>
+        ))}
     </div>
   );
 }
