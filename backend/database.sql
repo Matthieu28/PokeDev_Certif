@@ -48,7 +48,8 @@ CREATE TABLE IF NOT EXISTS pokeball (
   id INT PRIMARY KEY AUTO_INCREMENT,
   nameBall VARCHAR(25) NOT NULL,
   url VARCHAR(255) NOT NULL,
-  rate FLOAT NOT NULL
+  rate FLOAT NOT NULL,
+  price INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS bagBall (
@@ -101,11 +102,11 @@ END;
 
 INSERT INTO role (name) VALUES ("basic"), ("vip"), ("admin");
 
-INSERT INTO pokeball (nameBall, url, rate) VALUES 
-("PokeBall", "https://www.pokepedia.fr/images/0/07/Miniature_Pok%C3%A9_Ball_HOME.png", 1), 
-("SuperBall", "https://www.pokepedia.fr/images/2/23/Miniature_Super_Ball_HOME.png", 1.5),
-("HyperBall", "https://www.pokepedia.fr/images/a/a2/Miniature_Hyper_Ball_HOME.png", 2),
-("MasterBall", "https://www.pokepedia.fr/images/3/34/Miniature_Master_Ball_HOME.png", 255);
+INSERT INTO pokeball (nameBall, url, rate, price) VALUES 
+("PokeBall", "https://www.pokepedia.fr/images/0/07/Miniature_Pok%C3%A9_Ball_HOME.png", 1, 100), 
+("SuperBall", "https://www.pokepedia.fr/images/2/23/Miniature_Super_Ball_HOME.png", 1.5, 250),
+("HyperBall", "https://www.pokepedia.fr/images/a/a2/Miniature_Hyper_Ball_HOME.png", 2, 700),
+("MasterBall", "https://www.pokepedia.fr/images/3/34/Miniature_Master_Ball_HOME.png", 255, 100000);
 
 INSERT INTO avatar (url, name) VALUES ("https://archives.bulbagarden.net/media/upload/9/9a/Spr_B2W2_Red.png", "Red"), ("https://archives.bulbagarden.net/media/upload/f/f4/Spr_B2W2_Blue.png", "Blue");
 

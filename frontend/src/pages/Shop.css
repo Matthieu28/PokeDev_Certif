@@ -1,34 +1,200 @@
-.div_container_all_shop {
+.container_all_shop {
   width: 100%;
   height: calc(100vh - 4em);
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.div_shop_title {
-  margin: 0 auto;
+.div_title_shop {
   margin-top: 2em;
   font-size: 12px;
   width: 90%;
+  height: 8%;
   background-color: rgb(236, 236, 236);
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.div_shop_title h1 {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-}
-
-.all_ball_container {
-  margin: 0 auto;
-  margin-top: 2em;
-  font-size: 12px;
+.div_container_item {
   width: 90%;
   height: 80%;
-  background-color: rgb(236, 236, 236);
-  text-align: center;
-  overflow: scroll;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-between;
+}
+
+.list_chose_item {
+  background-color: rgb(236, 236, 236);
+  width: 15%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.list_chose_item button {
+  width: 90%;
+  height: 10%;
+  margin-top: 0.5em;
+  text-align: left;
+  padding-left: 1em;
+  font-size: 18px;
+  background-color: rgb(226, 226, 226);
+  border: none;
+  cursor: pointer;
+}
+
+.list_chose_item button:hover {
+  background-color: rgb(216, 216, 216);
+}
+
+.list_container_item {
+  width: 84%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.all_gold_user {
+  background-color: rgb(236, 236, 236);
+  height: 6%;
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.gold_quantity {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 8%;
+}
+
+.gold_quantity p {
+  font-weight: bolder;
+  font-size: 18px;
+}
+
+.gold_quantity img {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.all_list_buy_item {
+  background-color: rgb(236, 236, 236);
+  height: 92%;
+  width: 100%;
+  display: flex;
+  overflow: scroll;
+}
+
+.card_shop_ball {
+  border: 1px solid black;
+  width: 14%;
+  height: 40%;
+  margin-top: 1em;
+  margin-left: 1em;
+  margin-right: 1em;
+  margin-bottom: 1em;
+}
+
+.card_shop_ball_picture {
+  width: 100%;
+  height: 75%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card_shop_ball_picture img {
+  width: 90%;
+}
+
+.card_shop_ball_title {
+  width: 100%;
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card_shop_ball_button {
+  width: 100%;
+  height: 15%;
+  display: flex;
+}
+
+.card_shop_ball_button input {
+  width: 30%;
+  padding-left: 0.5em;
+}
+
+.card_shop_ball_button button {
+  width: 70%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card_shop_ball_button button p {
+  font-size: 18px;
+  margin-right: 0.25em;
+}
+
+.card_shop_ball_button button img {
+  width: 1.8em;
+}
+
+@media screen and (max-width: 1200px) {
+  .div_container_item {
+    flex-wrap: wrap;
+  }
+  .list_chose_item {
+    width: 100%;
+    height: 12%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  .list_chose_item button {
+    width: 30%;
+    height: 80%;
+    margin-left: 0.5em;
+    margin-top: 0.2em;
+    padding-left: 0.5em;
+  }
+  .list_container_item {
+    width: 100%;
+    height: 85%;
+    margin-top: 1em;
+  }
+  .all_gold_user {
+    height: 8%;
+  }
+  .gold_quantity {
+    width: 25%;
+  }
+  .all_list_buy_item {
+    height: 88%;
+  }
+  .all_list_buy_item {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .card_shop_ball {
+    width: 40%;
+    height: 50%;
+  }
+  .card_shop_ball_picture {
+    height: 60%;
+  }
+  .card_shop_ball_title {
+    height: 20%;
+  }
+  .card_shop_ball_button {
+    height: 20%;
+  }
 }
