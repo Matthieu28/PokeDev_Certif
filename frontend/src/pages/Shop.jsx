@@ -49,15 +49,19 @@ export default function Shop() {
   console.log(bagBallUser);
 
   return (
-    <div>
-      <h1>Shop Page</h1>
-      {bagBallUser.map((userBall) => (
-        <PokeballItem
-          key={userBall.bagballId}
-          userBall={userBall}
-          onBuy={getBagBallShop}
-        />
-      ))}
+    <div className="div_container_all_shop">
+      <div className="div_shop_title">
+        <h1>Shop Page</h1>
+      </div>
+      <div className="all_ball_container">
+        {bagBallUser.map((userBall) => (
+          <PokeballItem
+            key={userBall.bagballId}
+            userBall={userBall}
+            onBuy={getBagBallShop}
+          />
+        ))}
+      </div>
     </div>
   );
 }

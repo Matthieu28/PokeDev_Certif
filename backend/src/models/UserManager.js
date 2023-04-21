@@ -24,9 +24,7 @@ class UserManager extends AbstractManager {
 
   findAll() {
     return this.connection.query(`
-    SELECT user.*, role.* 
-    FROM ${this.table} AS user
-    JOIN role ON user.roleId = role.id
+    SELECT user.*, role.* FROM ${this.table} AS user JOIN role ON user.roleId = role.id
     `);
   }
 }

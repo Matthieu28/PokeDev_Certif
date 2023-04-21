@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Catch.css";
 import { useCurrentUserContext } from "../contexts/CurrentUserContext";
+import pokemonGrass from "../assets/pokemonGrass.png";
 
 export default function Catch() {
   const { currentUser } = useCurrentUserContext();
@@ -9,6 +10,7 @@ export default function Catch() {
   const [randomPokemon, setRandomPokemon] = useState(null);
   const [pokeball, setPokeball] = useState([]);
   const [isCaptured, setIsCaptured] = useState("");
+  const [rateCatchPokemon, setRateCatchPokemon] = useState(0.5);
 
   const getSpawnPokemon = async () => {
     try {
@@ -44,19 +46,23 @@ export default function Catch() {
     for (let i = 0; i < shuffledSpawnPokemon.length; i += 1) {
       const pokemon = shuffledSpawnPokemon[i];
       let tierChance = 0;
-      if (pokemon.id === 1) {
-        tierChance = 0.59; // 59% chance
-      } else if (pokemon.id === 2) {
-        tierChance = 0.33; // 33% chance
-      } else if (pokemon.id === 3) {
-        tierChance = 0.074; // 7.4% chance
-      } else if (pokemon.id === 4) {
-        tierChance = 0.005; // 0.5% chance
-      } else if (pokemon.id === 5) {
-        tierChance = 0.001; // 0.1% chance
+      switch (pokemon.id) {
+        case 2:
+          tierChance = 0.35;
+          break;
+        case 3:
+          tierChance = 0.05;
+          break;
+        case 4:
+          tierChance = 0.01;
+          break;
+        case 5:
+          tierChance = 0.001;
+          break;
+        default:
+          tierChance = 0.589;
       }
       tierChanceSum += tierChance;
-
       if (randomNum <= tierChanceSum) {
         selectedPokemon = pokemon;
         break;
@@ -112,10 +118,37 @@ export default function Catch() {
     }
   };
 
+  const rateMath = () => {
+    if (randomPokemon) {
+      switch (randomPokemon.nameTier) {
+        case "Rare":
+          setRateCatchPokemon(0.4);
+          break;
+        case "Super Rare":
+          setRateCatchPokemon(0.3);
+          break;
+        case "Legendary":
+          setRateCatchPokemon(0.05);
+          break;
+        case "Shiny":
+          setRateCatchPokemon(1);
+          break;
+        default:
+          setRateCatchPokemon(0.5);
+      }
+    }
+  };
+
+  useEffect(() => {
+    rateMath();
+  }, [randomPokemon]);
+
   const handleCatchClick = async (ballId) => {
     const selectedBall = pokeball.find((ball) => ball.bagballId === ballId);
     if (selectedBall.quantity > 0) {
-      const rateCatch = Math.random() < 0.5; // 1/2, 50%
+      const selectedBallRate = rateCatchPokemon * selectedBall.pokeballRate;
+
+      const rateCatch = Math.random() < selectedBallRate; // chance de capture
       await updatePokeballQuantity(ballId);
       if (rateCatch) {
         setIsCaptured("Caught");
@@ -131,6 +164,8 @@ export default function Catch() {
       // eslint-disable-next-line no-alert
       alert("No more ball !");
     }
+    // eslint-disable-next-line no-restricted-syntax
+    console.log(`${rateCatchPokemon}x${selectedBall.pokeballRate}`);
   };
 
   // eslint-disable-next-line no-restricted-syntax
@@ -140,39 +175,77 @@ export default function Catch() {
   // eslint-disable-next-line no-restricted-syntax
 
   return (
-    <div>
-      <h1>hello</h1>
-      <button type="button" onClick={getRandomPokemon}>
-        Click
-      </button>
-      {randomPokemon && (
-        <div>
-          <p>{randomPokemon.name}</p>
-          <img
-            src={randomPokemon.url}
-            alt={`${randomPokemon.name}-${randomPokemon.id}`}
-          />
-        </div>
-      )}
-      <p>{isCaptured}</p>
-      {randomPokemon &&
-        pokeball.map((ball) => (
-          <div
-            className="div_pokeball_bag"
-            key={ball.bagballId}
-            style={ball.quantity ? { display: "block" } : { display: "none" }}
-          >
-            <img src={ball.pokeballUrl} alt={ball.nameBall} />
-            <p>{ball.pokeballName}</p>
-            <p>{ball.quantity}</p>
-            <button
-              type="button"
-              onClick={() => handleCatchClick(ball.bagballId)}
-            >
-              Catch
-            </button>
+    <div className="div_all_container_catch">
+      <div className="div_spawn_sprite_pokemon">
+        {!randomPokemon ? (
+          <button type="button" onClick={getRandomPokemon}>
+            <img src={pokemonGrass} alt={pokemonGrass} />
+          </button>
+        ) : null}
+        {randomPokemon && (
+          <div className="div_sprite_pokemon_container">
+            <div className="div_container_name_pokemon">
+              <div className="div_container_name_pokemon2">
+                <div className="div_container_name_pokemon3">
+                  <div className="div_container_name_pokemon4">
+                    <p>{randomPokemon.name}</p>
+                    <p>lvl 1</p>
+                  </div>
+                  <div className="div_xp_bar_container">
+                    <div className="xp_bar">
+                      <p>HP</p>
+                      <div className="xp_bar_horizontal" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <img
+              src={randomPokemon.url}
+              alt={`${randomPokemon.name}-${randomPokemon.id}`}
+            />
           </div>
-        ))}
+        )}
+      </div>
+      <div className="div_ball_container">
+        <div className="div_dialogue_container">
+          <div className="div_dialogue_container2">
+            <div className="caught_or_not">
+              {!randomPokemon ? <p>{isCaptured}</p> : null}
+            </div>
+            <div className="container_table_ball">
+              {randomPokemon &&
+                pokeball.map((ball, index) => (
+                  <div
+                    className={`div_pokeball_bag ${
+                      index === pokeball.length - 1 ? "last_item" : ""
+                    }`}
+                    key={ball.bagballId}
+                    style={
+                      ball.quantity ? { display: "flex" } : { display: "none" }
+                    }
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handleCatchClick(ball.bagballId)}
+                    >
+                      <img src={ball.pokeballUrl} alt={ball.nameBall} />
+                      <div className="pokeball_name_card_in">
+                        <p>{ball.pokeballName}</p>
+                      </div>
+                      <div className="pokeball_rate_card_in">
+                        <p>x{ball.pokeballRate}</p>
+                      </div>
+                      <div className="pokeball_quantity_card_in">
+                        <p>Qty : {ball.quantity}</p>
+                      </div>
+                    </button>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 const models = require("../models");
 
 const browse = (req, res) => {
+  const { userId } = req.params;
   models.bagpokemon
-    .findAll()
+    .findAll(userId)
     .then(([rows]) => {
       res.send(rows);
     })
