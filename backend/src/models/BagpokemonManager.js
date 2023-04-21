@@ -18,10 +18,14 @@ class BagpokemonManager extends AbstractManager {
     ]);
   }
 
-  findAll() {
-    return this.connection.query(
-      `select p.*, bp.id as bagId from  ${this.table} as bp JOIN pokemon as p ON p.id = bp.pokemonId WHERE bp.userId = 1`
-    );
+  findAll(userId = null) {
+    if (userId) {
+      return this.connection.query(
+        `select bagpokemon.*, pokemon.name, pokemon.url, pokemon.pokedexid, tier.color from ${this.table} AS bagpokemon JOIN pokemon ON bagpokemon.pokemonId = pokemon.id JOIN tier ON pokemon.tierID = tier.id WHERE userId = ? ORDER BY pokedexid, CASE WHEN pokemon.pokedexid = pokemon.pokedexid THEN tierID END ASC`,
+        [userId]
+      );
+    }
+    return this.connection.query(`SELECT * FROM ${this.table}`);
   }
 }
 
