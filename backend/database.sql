@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS user (
     email VARCHAR(50) NOT NULL UNIQUE,
     password TEXT NOT NULL,
     username VARCHAR(20) NOT NULL UNIQUE,
+    gold INT NOT NULL DEFAULT 5000,
+    totalXp INT NOT NULL DEFAULT 0,
+    xpLimit INT NOT NULL DEFAULT 100,
+    levelAccount INT NOT NULL DEFAULT 0,
     roleID INT DEFAULT 1,
     avatarID INT DEFAULT 1,
     FOREIGN KEY (roleId) REFERENCES role(id),
@@ -66,38 +70,11 @@ CREATE TRIGGER tr_user_created
 AFTER INSERT
 ON user FOR EACH ROW
 BEGIN
-  -- Insérer un nouvel enregistrement dans la table bagBall avec les quantités appropriées
   INSERT INTO bagBall (userId, pokeballId, quantity)
   VALUES (NEW.id, 1, 20),
          (NEW.id, 2, 0),
          (NEW.id, 3, 0),
          (NEW.id, 4, 0);
-END;
-
-CREATE TRIGGER tr_pokeball_created
-AFTER INSERT
-ON pokeball FOR EACH ROW
-BEGIN
-  -- Récupérer tous les "userId" distincts de la table "user"
-  DECLARE done INT DEFAULT 0;
-  DECLARE userId INT;
-  DECLARE cur CURSOR FOR SELECT DISTINCT id FROM user;
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
-
-  -- Ouvrir le curseur pour récupérer les "userId"
-  OPEN cur;
-
-  -- Parcourir les "userId" et insérer un enregistrement dans la table "bagBall" avec une quantité de 0 pour chaque "userId"
-  read_loop: LOOP
-    FETCH cur INTO userId;
-    IF done THEN
-      LEAVE read_loop;
-    END IF;
-    INSERT INTO bagBall (userId, pokeballId, quantity) VALUES (userId, NEW.id, 0);
-  END LOOP;
-
-  -- Fermer le curseur
-  CLOSE cur;
 END;
 
 INSERT INTO role (name) VALUES ("basic"), ("vip"), ("admin");
@@ -108,9 +85,16 @@ INSERT INTO pokeball (nameBall, url, rate, price) VALUES
 ("HyperBall", "https://www.pokepedia.fr/images/a/a2/Miniature_Hyper_Ball_HOME.png", 2, 700),
 ("MasterBall", "https://www.pokepedia.fr/images/3/34/Miniature_Master_Ball_HOME.png", 255, 100000);
 
-INSERT INTO avatar (url, name) VALUES ("https://archives.bulbagarden.net/media/upload/9/9a/Spr_B2W2_Red.png", "Red"), ("https://archives.bulbagarden.net/media/upload/f/f4/Spr_B2W2_Blue.png", "Blue");
+INSERT INTO avatar (url, name) VALUES 
+("https://archives.bulbagarden.net/media/upload/9/9a/Spr_B2W2_Red.png", "Red"), 
+("https://archives.bulbagarden.net/media/upload/f/f4/Spr_B2W2_Blue.png", "Blue");
 
-INSERT INTO tier (nameTier, rate, color) VALUES ("Commun", 1, "#56D3FF"), ("Rare", 2, "#FF6C00"), ("Super Rare", 3, "#FFF000"), ("Legendary", 4, "#FF00FF"), ("Shiny", 5, "#9B00FF");
+INSERT INTO tier (nameTier, rate, color) VALUES 
+("Commun", 1, "#56D3FF"), 
+("Rare", 2, "#FF6C00"), 
+("Super Rare", 3, "#FFF000"), 
+("Legendary", 4, "#FF00FF"), 
+("Shiny", 5, "#9B00FF");
 
 INSERT INTO pokemon (pokedexId, url, name, tierID) VALUES
 (1, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__001__xy.gif", "Bulbasaur", 1),
@@ -158,13 +142,13 @@ INSERT INTO pokemon (pokedexId, url, name, tierID) VALUES
 (22, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__022__xy.gif", "Fearow", 2),
 (23, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__023__xy.gif", "Ekans", 1),
 (24, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__024__xy.gif", "Arbok", 2),
-(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025_m_xy.gif", "Pikachu", 1),
-(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-rock-star__oras.gif", "Pikachu Rock Star", 2),
-(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-belle__oras.gif", "Pikachu Belle", 2),
-(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-pop-star__oras.gif", "Pikachu Pop Star", 2),
-(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-phd__oras.gif", "Pikachu Ph. D.", 2),
-(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-libre__oras.gif", "Pikachu Libre", 2),
-(26, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__026_f_xy.gif", "Raichu", 2),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025_m_xy.gif", "Pikachu", 2),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-rock-star__oras.gif", "Pikachu Rock Star", 3),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-belle__oras.gif", "Pikachu Belle", 3),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-pop-star__oras.gif", "Pikachu Pop Star", 3),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-phd__oras.gif", "Pikachu Ph. D.", 3),
+(25, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__025-libre__oras.gif", "Pikachu Libre", 3),
+(26, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__026_f_xy.gif", "Raichu", 3),
 (27, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__027__xy.gif", "Sandshrew", 1),
 (28, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__028__xy.gif", "Sandslash", 2),
 (29, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__029__xy.gif", "Nidoran ♀", 1),

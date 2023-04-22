@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useCurrentUserContext } from "../contexts/CurrentUserContext";
 
 import "./Shop.css";
 import goldCoin from "../assets/goldCoin.png";
 
 export default function Shop() {
+  const { currentUser } = useCurrentUserContext();
   const [pokeballShop, setPokeballShop] = useState([]);
   const [quantityBalls, setQuantityBalls] = useState({});
+  const [userInformation, setUserInformation] = useState([]);
 
   const getPokeballShop = async () => {
     try {
@@ -23,23 +26,54 @@ export default function Shop() {
     getPokeballShop();
   }, []);
 
-  const getBagBallShop = async (ballId, quantity) => {
+  const getUserInformation = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
       );
-      const currentQuantity = response.data.quantity;
-      const newQuantity = currentQuantity + quantity;
-      await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`,
-        { quantity: newQuantity }
-      );
-      setQuantityBalls((prevQuantityBalls) => ({
-        ...prevQuantityBalls,
-        [ballId]: 0,
-      }));
+      setUserInformation(data);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    getUserInformation();
+  }, []);
+
+  const getBagBallShop = async (ballId, quantity) => {
+    if (quantity > 0) {
+      const ballShop = pokeballShop.find((ball) => ball.id === ballId);
+      const totalPrice = ballShop.price * quantity;
+      if (userInformation.gold >= totalPrice) {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`
+          );
+          const currentQuantity = response.data.quantity;
+          const newQuantity = currentQuantity + quantity;
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`,
+            { quantity: newQuantity }
+          );
+          setQuantityBalls((prevQuantityBalls) => ({
+            ...prevQuantityBalls,
+            [ballId]: 0,
+          }));
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+            { gold: userInformation.gold - totalPrice }
+          );
+          // eslint-disable-next-line no-alert
+          alert("Successful purchase !");
+          getUserInformation();
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        // eslint-disable-next-line no-alert
+        alert("Not enough gold !");
+      }
     }
   };
 
@@ -65,7 +99,7 @@ export default function Shop() {
           <div className="all_gold_user">
             <div className="gold_quantity">
               <img src={goldCoin} alt={goldCoin} />
-              <p>2400</p>
+              <p>{userInformation.gold}</p>
             </div>
           </div>
           <div className="all_list_buy_item">
