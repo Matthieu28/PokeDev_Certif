@@ -32,6 +32,7 @@ export default function NavBar() {
                 className={({ isActive }) => (isActive ? "active" : undefined)}
                 to="/"
                 style={{ textDecoration: "none", color: "#eeeeee" }}
+                onClick={handleShowNavbar}
               >
                 Login
               </NavLink>
@@ -43,6 +44,7 @@ export default function NavBar() {
                 className={({ isActive }) => (isActive ? "active" : undefined)}
                 to="/home"
                 style={{ textDecoration: "none", color: "#eeeeee" }}
+                onClick={handleShowNavbar}
               >
                 Home
               </NavLink>
@@ -53,6 +55,7 @@ export default function NavBar() {
               className={({ isActive }) => (isActive ? "active" : undefined)}
               to="/pokedex"
               style={{ textDecoration: "none", color: "#eeeeee" }}
+              onClick={handleShowNavbar}
             >
               Pokédex
             </NavLink>
@@ -63,6 +66,7 @@ export default function NavBar() {
                 className={({ isActive }) => (isActive ? "active" : undefined)}
                 to="/shop"
                 style={{ textDecoration: "none", color: "#eeeeee" }}
+                onClick={handleShowNavbar}
               >
                 Shop
               </NavLink>
@@ -74,6 +78,7 @@ export default function NavBar() {
                 className={({ isActive }) => (isActive ? "active" : undefined)}
                 to="/catch"
                 style={{ textDecoration: "none", color: "#eeeeee" }}
+                onClick={handleShowNavbar}
               >
                 Catch
               </NavLink>
@@ -85,6 +90,7 @@ export default function NavBar() {
                 className={({ isActive }) => (isActive ? "active" : undefined)}
                 to="/bag"
                 style={{ textDecoration: "none", color: "#eeeeee" }}
+                onClick={handleShowNavbar}
               >
                 Bag
               </NavLink>

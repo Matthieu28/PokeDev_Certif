@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./Catch.css";
 import { useCurrentUserContext } from "../contexts/CurrentUserContext";
 import pokemonGrass from "../assets/pokemonGrass.png";
+
+import "./Catch.css";
+import goldCoin from "../assets/goldCoin.png";
 
 export default function Catch() {
   const { currentUser } = useCurrentUserContext();
@@ -11,6 +13,7 @@ export default function Catch() {
   const [pokeball, setPokeball] = useState([]);
   const [isCaptured, setIsCaptured] = useState("");
   const [rateCatchPokemon, setRateCatchPokemon] = useState(0.5);
+  const [goldGet, setGoldGet] = useState(0);
 
   const getSpawnPokemon = async () => {
     try {
@@ -107,12 +110,69 @@ export default function Catch() {
     }
   };
 
+  const amountGold = () => {
+    if (randomPokemon) {
+      switch (randomPokemon.rate) {
+        case 2:
+          setGoldGet(Math.floor(Math.random() * (675 - 625 + 1)) + 625);
+          break;
+        case 3:
+          setGoldGet(Math.floor(Math.random() * (1800 - 1750 + 1)) + 1750);
+          break;
+        case 4:
+          setGoldGet(Math.floor(Math.random() * (7500 - 5000 + 1)) + 5000);
+          break;
+        case 5:
+          setGoldGet(Math.floor(Math.random() * (15000 - 10000 + 1)) + 10000);
+          break;
+        default:
+          setGoldGet(Math.floor(Math.random() * (300 - 250 + 1)) + 250);
+      }
+    }
+  };
+
+  useEffect(() => {
+    amountGold();
+  }, [randomPokemon]);
+
+  const updateGoldQuantity = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+      );
+      const currentGoldQuantity = response.data.gold;
+      const newGoldQuantity = currentGoldQuantity + goldGet;
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+        { gold: newGoldQuantity }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const getCaughtPokemon = async (userId, pokemonId) => {
     try {
       await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bagpokemons`, {
         userId,
         pokemonId,
       });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const updateTotalXp = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+      );
+      const currentTotalXp = response.data.totalXp;
+      const newTotalXpQuantity = currentTotalXp + 10;
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+        { totalXp: newTotalXpQuantity }
+      );
     } catch (err) {
       console.error(err);
     }
@@ -156,6 +216,8 @@ export default function Catch() {
           await getCaughtPokemon(currentUser.id, randomPokemon.pokemonId);
         }
         setRandomPokemon(null);
+        updateGoldQuantity();
+        updateTotalXp();
       } else {
         setIsCaptured("He escaped");
         setRandomPokemon(null);
@@ -164,15 +226,7 @@ export default function Catch() {
       // eslint-disable-next-line no-alert
       alert("No more ball !");
     }
-    // eslint-disable-next-line no-restricted-syntax
-    console.log(`${rateCatchPokemon}x${selectedBall.pokeballRate}`);
   };
-
-  // eslint-disable-next-line no-restricted-syntax
-  console.log(pokeball);
-  // eslint-disable-next-line no-restricted-syntax
-  console.log(randomPokemon);
-  // eslint-disable-next-line no-restricted-syntax
 
   return (
     <div className="div_all_container_catch">
@@ -212,6 +266,12 @@ export default function Catch() {
           <div className="div_dialogue_container2">
             <div className="caught_or_not">
               {!randomPokemon ? <p>{isCaptured}</p> : null}
+              {!randomPokemon && isCaptured === "Caught" ? (
+                <div className="caught_or_not_info">
+                  <span>You got : {goldGet}</span>
+                  <img src={goldCoin} alt={goldCoin} />
+                </div>
+              ) : null}
             </div>
             <div className="container_table_ball">
               {randomPokemon &&

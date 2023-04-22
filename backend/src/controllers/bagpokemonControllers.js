@@ -83,10 +83,37 @@ const destroy = (req, res) => {
     });
 };
 
+const deleteDuplicatePokemon = (req, res) => {
+  models.bagpokemon
+    .deleteDuplicatePokemon()
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+};
+
+const deleteDuplicatePokemonByTierID = (req, res) => {
+  const { tierID } = req.params;
+  models.bagpokemon
+    .deleteDuplicatePokemonByTierId(tierID)
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+};
+
 module.exports = {
   browse,
   read,
   edit,
   add,
   destroy,
+  deleteDuplicatePokemon,
+  deleteDuplicatePokemonByTierID,
 };
