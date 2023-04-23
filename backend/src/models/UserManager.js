@@ -21,6 +21,19 @@ class UserManager extends AbstractManager {
       email,
     ]);
   }
+
+  findAll() {
+    return this.connection.query(`
+    SELECT user.*, role.* FROM ${this.table} AS user JOIN role ON user.roleId = role.id
+    `);
+  }
+
+  findAllByID(userId) {
+    return this.connection.query(
+      `SELECT user.id, user.email, user.username, user.gold, user.totalXp, user.xpLimit, user.levelAccount, role.name as nameRole, avatar.name as nameAvatar, avatar.url as urlAvatar FROM ${this.table} AS user JOIN role ON user.roleId = role.id JOIN avatar ON user.avatarId = avatar.id WHERE user.id = ?`,
+      [userId]
+    );
+  }
 }
 
 module.exports = UserManager;

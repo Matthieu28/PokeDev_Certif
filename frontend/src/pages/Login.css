@@ -1,42 +1,73 @@
-form.login {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* width: 50%; */
-  background-color: cyan;
-  border-radius: 1rem;
-  padding: 1rem;
-  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
-  font-size: xx-large;
-}
-
-form.login label {
+.container_all_login {
   width: 100%;
   display: flex;
+}
+
+.container_image_title {
+  display: none;
+  background-color: gray;
+  height: calc(100vh - 4em);
+}
+
+.container_login {
+  display: flex;
   flex-direction: column;
-  align-items: center;
-  margin: 0.5rem;
-}
-
-form.login label input,
-form.login button {
-  margin-top: 0.5rem;
-  font-size: inherit;
-  padding: 0.5rem 1rem;
-  border-radius: inherit;
+  width: 100%;
   text-align: center;
+  height: calc(100vh - 4em);
 }
 
-form.login button {
-  cursor: pointer;
-  background-color: rgb(0, 203, 14);
+.login_title {
+  margin-top: 3em;
+}
+
+.login {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.5em;
+  align-items: center;
+}
+
+.login label {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.login label input {
+  font-size: 20px;
   border: none;
-  transition: box-shadow 0.2s, transform 0.2s;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2), -5px 5px 5px rgba(0, 0, 0, 0.2);
+  background-color: rgb(238, 238, 238);
+  padding: 0.5em;
+  width: 13em;
 }
 
-form.login button:hover {
-  transform: scale(1.1);
-  transition: box-shadow 0.5s, transform 0.5s;
+.login button {
+  margin-top: 1.5em;
+  border: none;
+  background-color: #00a2ff;
+  color: #eeeeee;
+  font-size: 25px;
+  padding: 0.25em;
+  width: 11.3em;
+}
+
+.div_create_account {
+  margin-top: 0.5em;
+}
+
+.div_create_account span {
+  font-weight: bolder;
+  color: rgb(81, 0, 83);
+}
+
+@media screen and (min-width: 1200px) {
+  .container_login {
+    width: 35%;
+  }
+  .container_image_title {
+    display: flex;
+    width: 65%;
+    align-items: center;
+    justify-content: center;
+  }
 }

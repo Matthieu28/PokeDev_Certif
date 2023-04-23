@@ -1,7 +1,7 @@
 const models = require("../models");
 
 const browse = (req, res) => {
-  models.make
+  models.pokeball
     .findAll()
     .then(([rows]) => {
       res.send(rows);
@@ -13,7 +13,7 @@ const browse = (req, res) => {
 };
 
 const read = (req, res) => {
-  models.make
+  models.pokeball
     .find(req.params.id)
     .then(([rows]) => {
       if (rows[0] == null) {
@@ -29,14 +29,14 @@ const read = (req, res) => {
 };
 
 const edit = (req, res) => {
-  const make = req.body;
+  const pokeball = req.body;
 
   // TODO validations (length, format...)
 
-  make.id = parseInt(req.params.id, 10);
+  pokeball.id = parseInt(req.params.id, 10);
 
-  models.make
-    .update(make)
+  models.pokeball
+    .update(pokeball)
     .then(([result]) => {
       if (result.affectedRows === 0) {
         res.sendStatus(404);
@@ -51,14 +51,14 @@ const edit = (req, res) => {
 };
 
 const add = (req, res) => {
-  const make = req.body;
+  const pokeball = req.body;
 
   // TODO validations (length, format...)
 
-  models.make
-    .insert(make)
+  models.pokeball
+    .insert(pokeball)
     .then(([result]) => {
-      res.location(`/makes/${result.insertId}`).sendStatus(201);
+      res.location(`/pokeballs/${result.insertId}`).sendStatus(201);
     })
     .catch((err) => {
       console.error(err);
@@ -67,7 +67,7 @@ const add = (req, res) => {
 };
 
 const destroy = (req, res) => {
-  models.make
+  models.pokeball
     .delete(req.params.id)
     .then(([result]) => {
       if (result.affectedRows === 0) {
