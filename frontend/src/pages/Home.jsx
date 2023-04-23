@@ -8,31 +8,14 @@ import "./Home.css";
 export default function Home() {
   const { currentUser } = useCurrentUserContext();
   const navigate = useNavigate();
-  const [roleName, setRoleName] = useState("");
   const [userInfo, setUserInfo] = useState([]);
   const [xpBar, setXpBar] = useState(0);
-
-  const getRoleName = () => {
-    switch (currentUser.roleID) {
-      case 2:
-        setRoleName("VIP");
-        break;
-      case 3:
-        setRoleName("Admin");
-        break;
-      default:
-        setRoleName("Basic");
-    }
-  };
-
-  useEffect(() => {
-    getRoleName();
-  }, []);
+  const [bagPokemonUser, setBagPokemonUser] = useState([]);
 
   const getUserInfo = async () => {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/all/${currentUser.id}`
       );
       setUserInfo(data);
     } catch (err) {
@@ -81,20 +64,64 @@ export default function Home() {
     getXpBar();
   }, [userInfo.totalXp, userInfo.xpLimit]);
 
+  const getBagPokemonUser = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/bagpokemons/all/${
+          currentUser.id
+        }`
+      );
+      setBagPokemonUser(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    getBagPokemonUser();
+  }, []);
+
+  let randomPokemon = null;
+
+  if (bagPokemonUser.length > 0) {
+    const randomIndex = Math.floor(Math.random() * (bagPokemonUser.length - 1));
+    randomPokemon = bagPokemonUser[randomIndex];
+  }
+
   return (
-    <section>
-      <h1>Home Page</h1>
-      <p>Welcome {currentUser.username}</p>
-      <p>Role : {roleName}</p>
-      <p>Total xp : {userInfo.totalXp}</p>
-      <p>cap : {userInfo.xpLimit}</p>
-      <p>level : {userInfo.levelAccount}</p>
-      <div className="progressBar">
-        <div className="progressBar__fill" style={{ width: `${xpBar}%` }} />
+    <div className="div_container_home">
+      <div className="div_player_home_name_role">
+        <div className="div_player_welcome">
+          <p>Welcome</p>
+          <p>{currentUser.username}</p>
+          <p>!</p>
+        </div>
+        <p>{userInfo.nameRole}</p>
+      </div>
+      <div className="div_container_picture_user">
+        <div className="div_container_picture_user_inside">
+          <div>
+            <img src={userInfo.urlAvatar} alt={userInfo.nameAvatar} />
+          </div>
+          <div>
+            {randomPokemon && (
+              <div>
+                <img src={randomPokemon.url} alt={randomPokemon.name} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="div_container_xpbar_lvl">
+        <p>level : {userInfo.levelAccount}</p>
+        <div className="progressBar">
+          <p>{`${Math.round(xpBar * 100) / 100}%`}</p>
+          <div className="progressBar__fill" style={{ width: `${xpBar}%` }} />
+        </div>
       </div>
       <button type="button" onClick={() => logOut()}>
         Log Out
       </button>
-    </section>
+    </div>
   );
 }

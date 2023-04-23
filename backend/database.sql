@@ -66,17 +66,6 @@ CREATE TABLE IF NOT EXISTS bagBall (
     CHECK (quantity >= 0)
 );
 
-CREATE TRIGGER tr_user_created
-AFTER INSERT
-ON user FOR EACH ROW
-BEGIN
-  INSERT INTO bagBall (userId, pokeballId, quantity)
-  VALUES (NEW.id, 1, 20),
-         (NEW.id, 2, 0),
-         (NEW.id, 3, 0),
-         (NEW.id, 4, 0);
-END;
-
 INSERT INTO role (name) VALUES ("basic"), ("vip"), ("admin");
 
 INSERT INTO pokeball (nameBall, url, rate, price) VALUES 
@@ -95,6 +84,19 @@ INSERT INTO tier (nameTier, rate, color) VALUES
 ("Super Rare", 3, "#FFF000"), 
 ("Legendary", 4, "#FF00FF"), 
 ("Shiny", 5, "#9B00FF");
+
+INSERT INTO user (email, username, password, roleID) VALUES ("adminemail@gmail.com", "adminname", "3xXb64p1", 3);
+
+-- CREATE TRIGGER tr_user_created
+-- AFTER INSERT
+-- ON user FOR EACH ROW
+-- BEGIN
+--   INSERT INTO bagBall (userId, pokeballId, quantity)
+--   VALUES (NEW.id, 1, 20),
+--          (NEW.id, 2, 0),
+--          (NEW.id, 3, 0),
+--          (NEW.id, 4, 0);
+-- END;
 
 INSERT INTO pokemon (pokedexId, url, name, tierID) VALUES
 (1, "https://www.pokencyclopedia.info/sprites/3ds/ani_6/3ani__001__xy.gif", "Bulbasaur", 1),

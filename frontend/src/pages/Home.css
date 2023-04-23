@@ -1,8 +1,119 @@
-.progressBar {
+.div_container_home {
   width: 100%;
-  height: 20px;
-  background-color: #f0f0f0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.div_player_home_name_role {
+  margin: 0 auto;
+  margin-top: 1em;
+  width: 90%;
+  background-color: rgb(236, 236, 236);
+  text-align: center;
+  font-size: 18px;
+  padding: 0.5em;
+}
+
+.div_player_welcome {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.div_player_welcome p:nth-child(2) {
+  font-weight: bolder;
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+}
+
+.div_player_home_name_role p:last-child {
+  font-weight: bolder;
+}
+
+.div_container_picture_user {
+  margin: 0 auto;
+  margin-top: 1em;
+  width: 90%;
+  background-color: rgb(236, 236, 236);
+  height: 26em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.div_container_picture_user_inside {
+  background-color: white;
+  width: 95%;
+  height: 95%;
+  border-radius: 10px;
   position: relative;
+  overflow: hidden;
+}
+
+.div_container_picture_user_inside div:first-child {
+  height: 17em;
+  width: 10em;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 1em;
+  margin-left: 1em;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.div_container_picture_user_inside div:first-child img {
+  scale: 1.8;
+  margin-bottom: 5em;
+}
+
+.div_container_picture_user_inside div:last-child {
+  height: 20em;
+  width: 14em;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 1.5em;
+  margin-left: 5em;
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
+
+.div_container_picture_user_inside div:last-child img {
+  position: absolute;
+  bottom: 0;
+  scale: 2.5;
+  margin-bottom: 4em;
+}
+
+.div_container_xpbar_lvl {
+  margin: 0 auto;
+  margin-top: 1em;
+  width: 90%;
+  background-color: rgb(236, 236, 236);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 0.5em;
+  padding-bottom: 1em;
+}
+
+.progressBar {
+  width: 90%;
+  height: 20px;
+  background-color: white;
+  position: relative;
+  border: 1px solid black;
+  border-radius: 15px;
+}
+
+.progressBar p {
+  font-weight: bolder;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .progressBar__fill {
@@ -10,9 +121,19 @@
   display: block;
   height: 100%;
   width: 0;
-  background-color: #00cc00;
+  background-color: #03e903;
   position: absolute;
   top: 0;
   left: 0;
-  transition: width 0.5s ease-in-out; /* Ajoutez une transition pour une animation fluide */
+  transition: width 0.5s ease-in-out;
+  border-radius: 15px;
+}
+
+.div_container_home button {
+  width: 30%;
+  font-size: 18px;
+  font-weight: bolder;
+  padding: 0.25em;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
