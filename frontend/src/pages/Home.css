@@ -2,8 +2,19 @@
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.first_div_container_home {
+  width: 100%;
+}
+
+.second_div_container_home {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .div_player_home_name_role {
@@ -13,7 +24,8 @@
   background-color: rgb(236, 236, 236);
   text-align: center;
   font-size: 18px;
-  padding: 0.5em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
 }
 
 .div_player_welcome {
@@ -24,12 +36,37 @@
 
 .div_player_welcome p:nth-child(2) {
   font-weight: bolder;
-  margin-left: 0.25em;
-  margin-right: 0.25em;
 }
 
 .div_player_home_name_role p:last-child {
   font-weight: bolder;
+}
+
+.gold {
+  text-transform: uppercase;
+  line-height: 1;
+  text-align: center;
+  background: linear-gradient(
+    90deg,
+    rgba(186, 148, 62, 1) 0%,
+    rgba(236, 172, 32, 1) 20%,
+    rgba(186, 148, 62, 1) 39%,
+    rgba(249, 244, 180, 1) 50%,
+    rgba(186, 148, 62, 1) 60%,
+    rgba(236, 172, 32, 1) 80%,
+    rgba(186, 148, 62, 1) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s infinite;
+  background-size: 200%;
+  background-position: left;
+}
+@keyframes shine {
+  to {
+    background-position: right;
+  }
 }
 
 .div_container_picture_user {
@@ -109,11 +146,16 @@
   border-radius: 15px;
 }
 
-.progressBar p {
+.progressBar {
   font-weight: bolder;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.progressBar p {
+  position: absolute;
+  z-index: 2;
 }
 
 .progressBar__fill {
@@ -129,11 +171,174 @@
   border-radius: 15px;
 }
 
-.div_container_home button {
-  width: 30%;
-  font-size: 18px;
-  font-weight: bolder;
-  padding: 0.25em;
+.div_statistic_account {
+  margin: 0 auto;
   margin-top: 1em;
+  width: 90%;
+  background-color: rgb(236, 236, 236);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1em;
+  padding-bottom: 2em;
+}
+
+.div_statistic_container {
+  width: 90%;
+}
+
+.div_bar_horizon {
+  width: 95%;
+  height: 0.1em;
+  background-color: rgb(206, 204, 204);
+  margin: 0 auto;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.div_statistic_container_date_played {
+  margin-top: 1em;
+}
+
+.div_statistic_container_date_played h1,
+.div_statistic_container_gold_bought_master h1,
+.div_statistic_container_gold_caught_commun_rare_superrare_legendary_mega_shiny_xp_sent
+  h1 {
+  font-size: 20px;
+  margin-bottom: 0.25em;
+}
+
+.div_statistic_container_created_date,
+.div_statistic_container_time_played,
+.div_statistic_container_total_gold,
+.div_statistic_container_total_bought,
+.div_statistic_container_total_bought_master,
+.div_statistic_container_total_caught,
+.div_statistic_container_total_caught_commun,
+.div_statistic_container_total_caught_rare,
+.div_statistic_container_total_caught_superrare,
+.div_statistic_container_total_caught_legendary,
+.div_statistic_container_total_caught_mega,
+.div_statistic_container_total_caught_shiny,
+.div_statistic_container_total_xp,
+.div_statistic_container_ball_sent {
+  display: flex;
+  margin-left: 0.5em;
+}
+
+.div_statistic_container_created_date p:last-child,
+.div_statistic_container_time_played p:last-child,
+.div_statistic_container_total_gold p:last-child,
+.div_statistic_container_total_bought p:last-child,
+.div_statistic_container_total_bought_master p:last-child,
+.div_statistic_container_total_caught p:last-child,
+.div_statistic_container_total_caught_commun p:last-child,
+.div_statistic_container_total_caught_rare p:last-child,
+.div_statistic_container_total_caught_superrare p:last-child,
+.div_statistic_container_total_caught_legendary p:last-child,
+.div_statistic_container_total_caught_mega p:last-child,
+.div_statistic_container_total_caught_shiny p:last-child,
+.div_statistic_container_total_xp p:last-child,
+.div_statistic_container_ball_sent p:last-child {
+  font-weight: bolder;
+}
+
+.div_statistic_container_gold_bought_master,
+.div_statistic_container_gold_caught_commun_rare_superrare_legendary_mega_shiny_xp_sent {
+  margin-top: 1em;
+}
+
+.div_container_home button {
+  margin-top: 1em;
+  border: none;
+  background-color: #da0000;
+  color: #eeeeee;
+  font-size: 25px;
+  padding: 0.25em;
+  width: 8em;
   margin-bottom: 1em;
+  cursor: pointer;
+}
+
+@media screen and (min-width: 1200px) {
+  .div_container_home {
+    flex-wrap: nowrap;
+    height: calc(100vh - 4em);
+  }
+  .first_div_container_home {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .div_player_home_name_role {
+    width: 95%;
+    height: 6%;
+  }
+  .div_container_picture_user {
+    margin-top: 0;
+    height: 72%;
+    width: 95%;
+  }
+  .div_container_picture_user_inside div:first-child {
+    margin-left: 10em;
+    margin-bottom: 2em;
+  }
+  .div_container_picture_user_inside div:first-child img {
+    scale: 2;
+  }
+  .div_container_picture_user_inside div:last-child {
+    margin-left: 14em;
+  }
+  .div_container_picture_user_inside div:last-child img {
+    scale: 3;
+    margin-bottom: 6em;
+  }
+  .div_container_xpbar_lvl {
+    width: 95%;
+    height: 6%;
+    margin-top: 0;
+  }
+  .div_statistic_account {
+    width: 95%;
+    height: 76%;
+  }
+  .div_statistic_container {
+    width: 80%;
+  }
+  .div_statistic_container_date_played {
+    margin-top: 2em;
+  }
+  .div_bar_horizon {
+    width: 60%;
+  }
+  .div_statistic_container_date_played h1,
+  .div_statistic_container_gold_bought_master h1,
+  .div_statistic_container_gold_caught_commun_rare_superrare_legendary_mega_shiny_xp_sent
+    h1 {
+    margin-left: 10em;
+  }
+  .div_statistic_container_created_date,
+  .div_statistic_container_time_played,
+  .div_statistic_container_total_gold,
+  .div_statistic_container_total_bought,
+  .div_statistic_container_total_bought_master,
+  .div_statistic_container_total_caught,
+  .div_statistic_container_total_caught_commun,
+  .div_statistic_container_total_caught_rare,
+  .div_statistic_container_total_caught_superrare,
+  .div_statistic_container_total_caught_legendary,
+  .div_statistic_container_total_caught_mega,
+  .div_statistic_container_total_caught_shiny,
+  .div_statistic_container_total_xp,
+  .div_statistic_container_ball_sent {
+    margin-left: 13em;
+  }
+  .div_container_home button {
+    width: 6em;
+    height: 2em;
+    margin-top: 0.5em;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 0.75em;
+  }
 }

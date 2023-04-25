@@ -132,7 +132,8 @@ select {
 .div_delete_button {
   height: 20%;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row-reverse;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -148,6 +149,7 @@ select {
   cursor: pointer;
   background-color: #00a2ff;
   border: none;
+  z-index: 20;
 }
 
 .button_to_scroll:hover {

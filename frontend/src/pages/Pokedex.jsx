@@ -4,6 +4,7 @@ import "./Pokedex.css";
 
 export default function Pokedex() {
   const [pokedexList, setPokedexList] = useState([]);
+  const [pokedexListShiny, setPokedexListShiny] = useState([]);
   const [searchPokemon, setSearchPokemon] = useState("");
   const [tierNames, setTierNames] = useState([]);
   const [selectedTier, setSelectedTier] = useState("");
@@ -13,7 +14,10 @@ export default function Pokedex() {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/pokemons`
       );
-      setPokedexList(data);
+      const filteredPokedexList = data.filter((poke) => poke.tierId !== 6);
+      setPokedexList(filteredPokedexList);
+      const filteredPokedexListShiny = data.filter((poke) => poke.tierId === 6);
+      setPokedexListShiny(filteredPokedexListShiny);
       const allTierNames = data.map((poke) => poke.nameTier);
       const uniqueTierNames = [...new Set(allTierNames)];
       setTierNames(uniqueTierNames);
@@ -40,6 +44,12 @@ export default function Pokedex() {
       (selectedTier === "" || poke.nameTier === selectedTier)
   );
 
+  const filterPokedexListShiny = pokedexListShiny.filter(
+    (poke) =>
+      poke.name.toLowerCase().includes(searchPokemon.toLowerCase()) &&
+      selectedTier === "Shiny"
+  );
+
   return (
     <div className="container_pokedex">
       <div className="div_title_pokedex">
@@ -61,15 +71,35 @@ export default function Pokedex() {
           onChange={handleSelectTier}
         >
           <option value="">All</option>
-          {tierNames.map((tierName) => (
-            <option key={tierName} value={tierName}>
-              {tierName}
-            </option>
-          ))}
+          {tierNames.map(
+            (tierName) =>
+              tierName !== "Shiny" && (
+                <option key={tierName} value={tierName}>
+                  {tierName}
+                </option>
+              )
+          )}
+          <option value="Shiny">Shiny</option>
         </select>
       </div>
       <div className="div_all_pokemon">
         {filterPokedexList.map((poke) => (
+          <div
+            key={`${poke.id}-${poke.name}-${poke.tierID}`}
+            className="card_pokemon"
+            style={{
+              background: `linear-gradient(180deg, rgba(236,236,236,1) 0%, rgba(236,236,236,1) 85%, ${poke.color})`,
+            }}
+          >
+            <div className="card_pokemon_title">
+              <p>{poke.name}</p>
+            </div>
+            <div className="card_pokemon_picture">
+              <img src={poke.url} alt={`${poke.name}-${poke.pokedexid}`} />
+            </div>
+          </div>
+        ))}
+        {filterPokedexListShiny.map((poke) => (
           <div
             key={`${poke.id}-${poke.name}-${poke.tierID}`}
             className="card_pokemon"

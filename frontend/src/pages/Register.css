@@ -1,15 +1,4 @@
-.container_all_login {
-  width: 100%;
-  display: flex;
-}
-
-.container_image_title {
-  display: none;
-  background-color: gray;
-  height: calc(100vh - 4em);
-}
-
-.container_login {
+.container_register {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -17,23 +6,23 @@
   height: calc(100vh - 4em);
 }
 
-.login_title {
+.register_title {
   margin-top: 3em;
 }
 
-.login {
+.register {
   display: flex;
   flex-direction: column;
   margin-top: 1.5em;
   align-items: center;
 }
 
-.login label {
+.register label {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
 
-.login label input {
+.register label input {
   font-size: 20px;
   border: none;
   background-color: rgb(238, 238, 238);
@@ -41,7 +30,7 @@
   width: 13em;
 }
 
-.login button {
+.register button {
   margin-top: 1.5em;
   border: none;
   background-color: #00a2ff;
@@ -51,25 +40,13 @@
   width: 11.3em;
 }
 
-.div_create_account {
+.div_create_account_register {
   margin-top: 0.5em;
 }
 
-.div_create_account button {
+.div_create_account_register button {
   font-weight: bolder;
   color: rgb(81, 0, 83);
   border: none;
   background-color: transparent;
-}
-
-@media screen and (min-width: 1200px) {
-  .container_login {
-    width: 35%;
-  }
-  .container_image_title {
-    display: flex;
-    width: 65%;
-    align-items: center;
-    justify-content: center;
-  }
 }

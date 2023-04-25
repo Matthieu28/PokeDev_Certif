@@ -2,10 +2,11 @@ import { Routes, Route } from "react-router-dom";
 
 import { useCurrentUserContext } from "./contexts/CurrentUserContext";
 import NavBar from "./components/NavBar";
-import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Shop from "./pages/Shop";
+import Register from "./pages/Register";
 import Pokedex from "./pages/Pokedex";
+import Home from "./pages/Home";
+import Shop from "./pages/Shop";
 import Catch from "./pages/Catch";
 import Bag from "./pages/Bag";
 
@@ -19,6 +20,7 @@ function App() {
       <main>
         <Routes>
           {!currentUser.id && <Route path="/" element={<Login />} />}
+          {!currentUser.id && <Route path="/register" element={<Register />} />}
           <Route path="/pokedex" element={<Pokedex />} />
           {currentUser.id && <Route path="/home" element={<Home />} />}
           {currentUser.id && <Route path="/catch" element={<Catch />} />}

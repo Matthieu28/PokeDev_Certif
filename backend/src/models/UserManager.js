@@ -24,13 +24,13 @@ class UserManager extends AbstractManager {
 
   findAll() {
     return this.connection.query(`
-    SELECT user.*, role.* FROM ${this.table} AS user JOIN role ON user.roleId = role.id
+    SELECT user.*, role.name FROM ${this.table} AS user JOIN role ON user.roleId = role.id
     `);
   }
 
   findAllByID(userId) {
     return this.connection.query(
-      `SELECT user.id, user.email, user.username, user.gold, user.totalXp, user.xpLimit, user.levelAccount, role.name as nameRole, avatar.name as nameAvatar, avatar.url as urlAvatar FROM ${this.table} AS user JOIN role ON user.roleId = role.id JOIN avatar ON user.avatarId = avatar.id WHERE user.id = ?`,
+      `SELECT user.id, user.email, user.username, user.createdAccount, user.gold, user.totalGold, user.totalBallBought, user.totalMasterBallBought, user.totalBallSent, user.totalCaught, user.totalCaughtC, user.totalCaughtR, user.totalCaughtSR, user.totalCaughtL, user.totalCaughtM, user.totalCaughtS, user.totalXp, user.totalAllXp, user.xpLimit, user.levelAccount, role.name as nameRole, avatar.name as nameAvatar, avatar.url as urlAvatar FROM ${this.table} AS user JOIN role ON user.roleId = role.id JOIN avatar ON user.avatarId = avatar.id WHERE user.id = ?`,
       [userId]
     );
   }

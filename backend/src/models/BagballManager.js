@@ -16,14 +16,28 @@ class BagballManager extends AbstractManager {
     ]);
   }
 
+  updateByUserIdAndPokeballId(bagball, userId, pokeballId) {
+    return this.connection.query(
+      `update ${this.table} set ? where userId = ? and pokeballId = ?`,
+      [bagball, userId, pokeballId]
+    );
+  }
+
   findAll(userId = null) {
     if (userId) {
       return this.connection.query(
-        `SELECT bb.id as bagballId, u.username as userName, p.nameBall as pokeballName, p.rate as pokeballRate , p.url as pokeballUrl, bb.quantity, bb.userId FROM ${this.table} as bb JOIN user as u ON u.id = bb.userId JOIN pokeball as p ON p.id = bb.pokeballId WHERE bb.userId = ?`,
+        `SELECT bagball.*, user.username, pokeball.nameBall, pokeball.url, pokeball.rate FROM ${this.table} AS bagball JOIN user ON bagball.userId = user.id JOIN pokeball ON bagball.pokeballId = pokeball.id WHERE bagball.userId = ?`,
         [userId]
       );
     }
     return this.connection.query(`SELECT * FROM ${this.table}`);
+  }
+
+  findAllByBall(userId, pokeballId) {
+    return this.connection.query(
+      `SELECT bagball.*, user.username, pokeball.nameBall, pokeball.url, pokeball.rate FROM ${this.table} AS bagball JOIN user ON bagball.userId = user.id JOIN pokeball ON bagball.pokeballId = pokeball.id WHERE bagball.userId = ? AND bagball.pokeballId = ?`,
+      [userId, pokeballId]
+    );
   }
 }
 
