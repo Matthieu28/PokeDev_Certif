@@ -13,6 +13,23 @@ const browse = (req, res) => {
     });
 };
 
+const findAllByBall = (req, res) => {
+  const { userId, pokeballId } = req.params;
+  models.bagball
+    .findAllByBall(userId, pokeballId)
+    .then(([rows]) => {
+      if (rows[0] == null) {
+        res.sendStatus(404);
+      } else {
+        res.send(rows[0]);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+};
+
 const read = (req, res) => {
   models.bagball
     .find(req.params.id)
@@ -38,6 +55,25 @@ const edit = (req, res) => {
 
   models.bagball
     .update(bagball)
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        res.sendStatus(404);
+      } else {
+        res.sendStatus(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+};
+
+const editByUserIdAndPokeballId = (req, res) => {
+  const { userId, pokeballId } = req.params;
+  const bagball = req.body;
+
+  models.bagball
+    .updateByUserIdAndPokeballId(bagball, userId, pokeballId)
     .then(([result]) => {
       if (result.affectedRows === 0) {
         res.sendStatus(404);
@@ -85,8 +121,10 @@ const destroy = (req, res) => {
 
 module.exports = {
   browse,
+  findAllByBall,
   read,
   edit,
+  editByUserIdAndPokeballId,
   add,
   destroy,
 };

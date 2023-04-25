@@ -65,7 +65,7 @@ ul.navbar_mobile {
   padding-right: 0.5em;
   text-align: center;
   transition: opacity 0.3s ease-in-out;
-  z-index: 10;
+  z-index: 100;
 }
 
 ul.navbar_mobile.open {

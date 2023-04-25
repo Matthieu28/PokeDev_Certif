@@ -45,6 +45,10 @@ export default function Login() {
     }
   };
 
+  const handleRegister = () => {
+    navigate("/register");
+  };
+
   return (
     <div className="container_all_login">
       <div className="container_image_title">
@@ -79,7 +83,11 @@ export default function Login() {
         </form>
         <div className="div_create_account">
           <p>
-            You dont have account ? Click <span>Here</span>
+            You dont have account ? Click{" "}
+            <button type="button" onClick={handleRegister}>
+              Here
+            </button>{" "}
+            !
           </p>
         </div>
       </div>

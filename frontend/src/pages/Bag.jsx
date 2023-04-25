@@ -3,6 +3,7 @@ import axios from "axios";
 import "./Bag.css";
 import { useCurrentUserContext } from "../contexts/CurrentUserContext";
 import DeleteButton from "./sous_pages/DeleteButton";
+import LikeButton from "./sous_pages/LikeButton";
 
 export default function Bag() {
   const { currentUser } = useCurrentUserContext();
@@ -235,6 +236,12 @@ export default function Bag() {
             </div>
             <div className="div_delete_button">
               <DeleteButton id={poke.id} setRefresh={getPokemonInventory} />
+              <LikeButton
+                bagPoke={pokemonInventory}
+                isFavorite={poke.isFavorite}
+                id={poke.id}
+                setRefresh={getPokemonInventory}
+              />
             </div>
           </div>
         ))}

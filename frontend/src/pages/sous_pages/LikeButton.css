@@ -1,0 +1,16 @@
+.container_love_button {
+  width: 2em;
+  height: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: transparent;
+}
+
+.container_love_button span {
+  margin-left: 0.25em;
+  font-size: 26px;
+  cursor: pointer;
+  z-index: 10;
+}

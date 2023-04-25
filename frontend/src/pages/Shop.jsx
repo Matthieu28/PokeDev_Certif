@@ -29,7 +29,7 @@ export default function Shop() {
   const getUserInformation = async () => {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/all/${currentUser.id}`
       );
       setUserInformation(data);
     } catch (err) {
@@ -41,24 +41,71 @@ export default function Shop() {
     getUserInformation();
   }, []);
 
-  const getBagBallShop = async (ballId, quantity) => {
+  const getTotalBall = async (quantity) => {
+    try {
+      const responseUser = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+      );
+      const currentBallBought = responseUser.data.totalBallBought;
+      const newBallBoughtQuantity = currentBallBought + quantity;
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+        {
+          totalBallBought: newBallBoughtQuantity,
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getTotalMasterBall = async (pokeballId, quantity) => {
+    try {
+      if (pokeballId === 4) {
+        const responseMasterBall = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+        );
+        const currentMasterBallBought =
+          responseMasterBall.data.totalMasterBallBought;
+        const newMasterBallBoughtQuantity = currentMasterBallBought + quantity;
+        await axios.put(
+          `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+          {
+            totalMasterBallBought: newMasterBallBoughtQuantity,
+          }
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getBagBallShop = async (pokeballId, quantity) => {
     if (quantity > 0) {
-      const ballShop = pokeballShop.find((ball) => ball.id === ballId);
+      const ballShop = pokeballShop.find((ball) => ball.id === pokeballId);
       const totalPrice = ballShop.price * quantity;
       if (userInformation.gold >= totalPrice) {
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`
+            `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/all/${
+              currentUser.id
+            }/${pokeballId}`
           );
           const currentQuantity = response.data.quantity;
           const newQuantity = currentQuantity + quantity;
           await axios.put(
-            `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`,
-            { quantity: newQuantity }
+            `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/edit/${
+              currentUser.id
+            }/${pokeballId}`,
+            {
+              quantity: newQuantity,
+            }
           );
+          getTotalBall(quantity);
+          getTotalMasterBall(pokeballId, quantity);
           setQuantityBalls((prevQuantityBalls) => ({
             ...prevQuantityBalls,
-            [ballId]: 0,
+            [pokeballId]: 0,
           }));
           await axios.put(
             `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
@@ -68,7 +115,24 @@ export default function Shop() {
           alert("Successful purchase !");
           getUserInformation();
         } catch (err) {
-          console.error(err);
+          await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/bagballs`, {
+            userId: currentUser.id,
+            pokeballId,
+            quantity,
+          });
+          getTotalBall(quantity);
+          getTotalMasterBall(pokeballId, quantity);
+          setQuantityBalls((prevQuantityBalls) => ({
+            ...prevQuantityBalls,
+            [pokeballId]: 0,
+          }));
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+            { gold: userInformation.gold - totalPrice }
+          );
+          // eslint-disable-next-line no-alert
+          alert("Successful purchase !");
+          getUserInformation();
         }
       } else {
         // eslint-disable-next-line no-alert
@@ -77,11 +141,25 @@ export default function Shop() {
     }
   };
 
-  const handleQuantityChange = (ballId, newQuantity) => {
+  const handleQuantityChange = (pokeballId, newQuantity) => {
     setQuantityBalls((prevQuantityBalls) => ({
       ...prevQuantityBalls,
-      [ballId]: newQuantity,
+      [pokeballId]: newQuantity,
     }));
+  };
+
+  const getNumberUnit = (number) => {
+    if (number >= 1000000) {
+      const divideNumber = number / 1000000;
+      const newNumber = `${divideNumber.toFixed(1)}M`;
+      return newNumber;
+    }
+    if (number >= 1000) {
+      const divideNumber = number / 1000;
+      const newNumber = `${divideNumber.toFixed(1)}K`;
+      return newNumber;
+    }
+    return number;
   };
 
   return (
@@ -99,7 +177,7 @@ export default function Shop() {
           <div className="all_gold_user">
             <div className="gold_quantity">
               <img src={goldCoin} alt={goldCoin} />
-              <p>{userInformation.gold}</p>
+              <p>{getNumberUnit(userInformation.gold)}</p>
             </div>
           </div>
           <div className="all_list_buy_item">
@@ -136,8 +214,10 @@ export default function Shop() {
                   >
                     <p className="price">
                       {!quantityBalls[ballShop.id]
-                        ? ballShop.price
-                        : quantityBalls[ballShop.id] * ballShop.price}
+                        ? getNumberUnit(ballShop.price)
+                        : getNumberUnit(
+                            quantityBalls[ballShop.id] * ballShop.price
+                          )}
                     </p>
                     <img src={goldCoin} alt={goldCoin} />
                   </button>

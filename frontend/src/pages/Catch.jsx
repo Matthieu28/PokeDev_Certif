@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useCurrentUserContext } from "../contexts/CurrentUserContext";
+import { useExpContext } from "../contexts/ExpContext";
 import pokemonGrass from "../assets/pokemonGrass.png";
 
 import "./Catch.css";
@@ -8,6 +9,7 @@ import goldCoin from "../assets/goldCoin.png";
 
 export default function Catch() {
   const { currentUser } = useCurrentUserContext();
+  const { setUserInfo } = useExpContext();
   const [spawnPokemon, setSpawnPokemon] = useState([]);
   const [randomPokemon, setRandomPokemon] = useState(null);
   const [pokeball, setPokeball] = useState([]);
@@ -49,9 +51,9 @@ export default function Catch() {
     for (let i = 0; i < shuffledSpawnPokemon.length; i += 1) {
       const pokemon = shuffledSpawnPokemon[i];
       let tierChance = 0;
-      switch (pokemon.id) {
+      switch (pokemon.tierId) {
         case 2:
-          tierChance = 0.35;
+          tierChance = 0.34;
           break;
         case 3:
           tierChance = 0.05;
@@ -60,6 +62,9 @@ export default function Catch() {
           tierChance = 0.01;
           break;
         case 5:
+          tierChance = 0.01;
+          break;
+        case 6:
           tierChance = 0.001;
           break;
         default:
@@ -94,6 +99,7 @@ export default function Catch() {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/bagballs/${ballId}`
       );
+
       const currentQuantity = response.data.quantity;
       const newQuantity = currentQuantity - 1;
       await axios.put(
@@ -112,21 +118,24 @@ export default function Catch() {
 
   const amountGold = () => {
     if (randomPokemon) {
-      switch (randomPokemon.rate) {
-        case 2:
-          setGoldGet(Math.floor(Math.random() * (675 - 625 + 1)) + 625);
+      switch (randomPokemon.tierId) {
+        case 2: // rare
+          setGoldGet(Math.floor(Math.random() * (500 - 450 + 1)) + 450);
           break;
-        case 3:
-          setGoldGet(Math.floor(Math.random() * (1800 - 1750 + 1)) + 1750);
+        case 3: // super rare
+          setGoldGet(Math.floor(Math.random() * (1250 - 1200 + 1)) + 1200);
           break;
-        case 4:
-          setGoldGet(Math.floor(Math.random() * (7500 - 5000 + 1)) + 5000);
-          break;
-        case 5:
+        case 4: // legendary
           setGoldGet(Math.floor(Math.random() * (15000 - 10000 + 1)) + 10000);
           break;
-        default:
-          setGoldGet(Math.floor(Math.random() * (300 - 250 + 1)) + 250);
+        case 5: // mega
+          setGoldGet(Math.floor(Math.random() * (15000 - 10000 + 1)) + 10000);
+          break;
+        case 6: // shiny
+          setGoldGet(Math.floor(Math.random() * (25000 - 20000 + 1)) + 20000);
+          break;
+        default: // commun
+          setGoldGet(Math.floor(Math.random() * (200 - 150 + 1)) + 150);
       }
     }
   };
@@ -142,9 +151,11 @@ export default function Catch() {
       );
       const currentGoldQuantity = response.data.gold;
       const newGoldQuantity = currentGoldQuantity + goldGet;
+      const currentTotalGoldQuantity = response.data.totalGold;
+      const newTotalGoldQuantity = currentTotalGoldQuantity + goldGet;
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
-        { gold: newGoldQuantity }
+        { gold: newGoldQuantity, totalGold: newTotalGoldQuantity }
       );
     } catch (err) {
       console.error(err);
@@ -169,10 +180,16 @@ export default function Catch() {
       );
       const currentTotalXp = response.data.totalXp;
       const newTotalXpQuantity = currentTotalXp + 10;
+      const currentTotalAllXp = response.data.totalAllXp;
+      const newTotalAllXp = currentTotalAllXp + 10;
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
-        { totalXp: newTotalXpQuantity }
+        { totalXp: newTotalXpQuantity, totalAllXp: newTotalAllXp }
       );
+      setUserInfo((prevUserInfo) => ({
+        ...prevUserInfo,
+        totalXp: newTotalXpQuantity,
+      }));
     } catch (err) {
       console.error(err);
     }
@@ -190,6 +207,9 @@ export default function Catch() {
         case "Legendary":
           setRateCatchPokemon(0.05);
           break;
+        case "Mega":
+          setRateCatchPokemon(0.05);
+          break;
         case "Shiny":
           setRateCatchPokemon(1);
           break;
@@ -203,12 +223,144 @@ export default function Catch() {
     rateMath();
   }, [randomPokemon]);
 
-  const handleCatchClick = async (ballId) => {
-    const selectedBall = pokeball.find((ball) => ball.bagballId === ballId);
-    if (selectedBall.quantity > 0) {
-      const selectedBallRate = rateCatchPokemon * selectedBall.pokeballRate;
+  const totalCaughtCase = async () => {
+    switch (randomPokemon.nameTier) {
+      case "Rare":
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+          );
+          const currentTotalCaught = response.data.totalCaught;
+          const newTotalCaught = currentTotalCaught + 1;
+          const currentTotalCaughtRare = response.data.totalCaughtR;
+          const newTotalCaughtRare = currentTotalCaughtRare + 1;
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+            { totalCaught: newTotalCaught, totalCaughtR: newTotalCaughtRare }
+          );
+        } catch (err) {
+          console.error(err);
+        }
+        break;
+      case "Super Rare":
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+          );
+          const currentTotalCaught = response.data.totalCaught;
+          const newTotalCaught = currentTotalCaught + 1;
+          const currentTotalCaughtSuperRare = response.data.totalCaughtSR;
+          const newTotalCaughtSuperRare = currentTotalCaughtSuperRare + 1;
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+            {
+              totalCaught: newTotalCaught,
+              totalCaughtSR: newTotalCaughtSuperRare,
+            }
+          );
+        } catch (err) {
+          console.error(err);
+        }
+        break;
+      case "Legendary":
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+          );
+          const currentTotalCaught = response.data.totalCaught;
+          const newTotalCaught = currentTotalCaught + 1;
+          const currentTotalCaughtLegendary = response.data.totalCaughtL;
+          const newTotalCaughtLegendary = currentTotalCaughtLegendary + 1;
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+            {
+              totalCaught: newTotalCaught,
+              totalCaughtL: newTotalCaughtLegendary,
+            }
+          );
+        } catch (err) {
+          console.error(err);
+        }
+        break;
+      case "Mega":
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+          );
+          const currentTotalCaught = response.data.totalCaught;
+          const newTotalCaught = currentTotalCaught + 1;
+          const currentTotalCaughtMega = response.data.totalCaughtM;
+          const newTotalCaughtMega = currentTotalCaughtMega + 1;
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+            { totalCaught: newTotalCaught, totalCaughtM: newTotalCaughtMega }
+          );
+        } catch (err) {
+          console.error(err);
+        }
+        break;
+      case "Shiny":
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+          );
+          const currentTotalCaught = response.data.totalCaught;
+          const newTotalCaught = currentTotalCaught + 1;
+          const currentTotalCaughtShiny = response.data.totalCaughtS;
+          const newTotalCaughtShiny = currentTotalCaughtShiny + 1;
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+            { totalCaught: newTotalCaught, totalCaughtS: newTotalCaughtShiny }
+          );
+        } catch (err) {
+          console.error(err);
+        }
+        break;
+      default:
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+          );
+          const currentTotalCaught = response.data.totalCaught;
+          const newTotalCaught = currentTotalCaught + 1;
+          const currentTotalCaughtCommun = response.data.totalCaughtC;
+          const newTotalCaughtCommun = currentTotalCaughtCommun + 1;
+          await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+            {
+              totalCaught: newTotalCaught,
+              totalCaughtC: newTotalCaughtCommun,
+            }
+          );
+        } catch (err) {
+          console.error(err);
+        }
+    }
+  };
 
-      const rateCatch = Math.random() < selectedBallRate; // chance de capture
+  const getBallSent = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`
+      );
+      const currentTotalSent = response.data.totalBallSent;
+      const newTotalSent = currentTotalSent + 1;
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/${currentUser.id}`,
+        {
+          totalBallSent: newTotalSent,
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCatchClick = async (ballId) => {
+    const selectedBall = pokeball.find((ball) => ball.id === ballId);
+    if (selectedBall.quantity > 0) {
+      const selectedBallRate = rateCatchPokemon * selectedBall.rate;
+      const rateCatch = Math.random() < selectedBallRate;
       await updatePokeballQuantity(ballId);
       if (rateCatch) {
         setIsCaptured("Caught");
@@ -217,10 +369,15 @@ export default function Catch() {
         }
         setRandomPokemon(null);
         updateGoldQuantity();
+        getBallSent();
+        totalCaughtCase();
         updateTotalXp();
+        getPokeball();
       } else {
         setIsCaptured("He escaped");
         setRandomPokemon(null);
+        getBallSent();
+        getPokeball();
       }
     } else {
       // eslint-disable-next-line no-alert
@@ -287,14 +444,14 @@ export default function Catch() {
                   >
                     <button
                       type="button"
-                      onClick={() => handleCatchClick(ball.bagballId)}
+                      onClick={() => handleCatchClick(ball.id)}
                     >
-                      <img src={ball.pokeballUrl} alt={ball.nameBall} />
+                      <img src={ball.url} alt={ball.nameBall} />
                       <div className="pokeball_name_card_in">
-                        <p>{ball.pokeballName}</p>
+                        <p>{ball.nameBall}</p>
                       </div>
                       <div className="pokeball_rate_card_in">
-                        <p>x{ball.pokeballRate}</p>
+                        <p>x{ball.rate}</p>
                       </div>
                       <div className="pokeball_quantity_card_in">
                         <p>Qty : {ball.quantity}</p>
